@@ -2,90 +2,113 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
+
 use App\Models\Recipe;
 use App\Models\Category;
+use App\Models\Ingredient;
+use App\Models\Step;
+use App\Http\Requests\StoreRecipeRequest;
+use App\Http\Requests\UpdateRecipeRequest;
+use App\Http\Resources\RecipeResource;
+use App\Http\Resources\RecipeCollection;
+
+use Illuminate\Http\Request; 
 
 class RecipeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Recipe::with(['category', 'steps', 'ingredients'])->get();
-    }
+        $recipes = QueryBuilder::for(Recipe::class)
+        ->allowedFilters(['category.name'])
+        ->defaultSort('-created_at')
+        ->allowedSorts(['preparationTime', 'created_at'])
+        ->with('ingredients', 'steps')
+        ->paginate();
 
-    public function store(Request $request)
-    {
-        $recipeData = $request->input('recipe');
+    // Set the path for pagination links
+    $recipes->setPath('http://157.241.61.249:80/laravel/api/recipes');
 
-        if (!$recipeData) {
-            return response()->json(['error' => 'Invalid payload'], 400);
-        }
-
-        $category = Category::firstOrCreate(['name' => $recipeData['category']]);
-        $recipe = $category->recipes()->create([
-            'title' => $recipeData['title'],
-            'preference' => $recipeData['preference'],
-            'description' => $recipeData['description'],
-            'imageUrl' => $recipeData['imageUrl'],
-            'preparationTime' => $recipeData['preparationTime'],
-            'comments' => $recipeData['comments'],
-        ]);
-
-        // Add steps to the recipe
-        $recipe->steps()->createMany($recipeData['steps']);
-
-        // Add ingredients to the recipe
-        $recipe->ingredients()->createMany($recipeData['ingredients']);
-
-        return response()->json($recipe->load(['category', 'steps', 'ingredients']), 201);
-    }
-
-    public function show(Recipe $recipe)
-    {
-        return $recipe->load(['category', 'steps', 'ingredients']);
-    }
-
-    public function update(Request $request, Recipe $recipe)
-    {
-       $recipeData = $request->input('recipe');
-
-    if (!$recipeData) {
-        return response()->json(['error' => 'Invalid payload'], 400);
-    }
-
-        $category = Category::firstOrCreate(['name' => $recipeData['category']]);
+    // Return the paginated results using your RecipeCollection
+    return RecipeResource::collection($recipes);
         
-        $recipe->update([
-            'title' => $recipeData['title'],
-            'preference' => $recipeData['preference'],
-            'description' => $recipeData['description'],
-            'imageUrl' => $recipeData['imageUrl'],
-            'preparationTime' => $recipeData['preparationTime'],
-            'comments' => $recipeData['comments'],
-            'category_id' => $category->id,
-        ]);
-
-        // Update steps
-        $recipe->steps()->delete();
-        $recipe->steps()->createMany($recipeData['steps']);
-
-        // Update ingredients
-        $recipe->ingredients()->delete();
-        $recipe->ingredients()->createMany($recipeData['ingredients']);
-
-        return response()->json($recipe->load(['category', 'steps', 'ingredients']), 200);
     }
+
+    public function store(StoreRecipeRequest $request)
+    {
+        $validatedData = $request->validated();
+    
+        // Create Category
+        $category = Category::firstOrCreate(['name' => $validatedData['category']]);
+        
+        // Create Recipe
+        $recipe = Recipe::create([
+            'title' => $validatedData['title'],
+            'description' => $validatedData['description'],
+            'category_id' => $category->id,
+            'preparationTime' => $validatedData['preparationTime'],
+        ]);
+    
+        // Create or find Ingredients
+        $ingredientsData = $validatedData['ingredients'];
+    
+        foreach ($ingredientsData as $ingredientData) {
+            $ingredient = new Ingredient([
+                'ingredientName' => $ingredientData['ingredientName'],
+                'measurementUnit' => $ingredientData['measurementUnit'],
+            ]);
+    
+            $recipe->ingredients()->save($ingredient);
+        }
+    
+        // Create Steps
+        $stepsData = $validatedData['preparationSteps'];
+    
+        foreach ($stepsData as $stepData) {
+            $step = new Step([
+                'stepDescription' => $stepData,
+            ]);
+    
+            $recipe->steps()->save($step);
+        }
+    
+        return new RecipeResource($recipe);
+    }
+    
+
+    public function show(Request $request, Recipe $recipe)
+    {
+        $recipe->load('ingredients', 'steps'); // Eager load the relationships
+        return new RecipeResource($recipe);
+    }
+
+    public function update(UpdateRecipeRequest $request, Recipe $recipe)
+    {
+        $validatedData = $request->validated();
+
+        // If the category is present in the request, update it
+        if (isset($validatedData['category'])) {
+            $category = Category::firstOrCreate(['name' => $validatedData['category']]);
+            $recipe->category()->associate($category);
+        }
+    
+        // Update other attributes
+        $recipe->update($validatedData);
+    
+        return new RecipeResource($recipe);
+    }
+
 
     public function destroy(Recipe $recipe)
     {
-        $recipe->steps()->delete();
-        $recipe->ingredients()->delete();
         $recipe->delete();
-        return response()->json(null, 204);
+
+        return response()->json(['message' => 'Recipe deleted successfully']);
     }
 
     public function categories()
     {
         return Category::all();
     }
+
 }

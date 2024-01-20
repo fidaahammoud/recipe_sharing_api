@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('id')->on('categories');
+            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->text('description');
             $table->string('imageUrl')->nullable();
-            $table->string('preparationTime');
+            $table->integer('preparationTime');
             $table->text('comments')->nullable();
             $table->timestamps();
         });

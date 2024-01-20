@@ -14,11 +14,7 @@ class Category extends Model
 
     protected $fillable = ['name'];
 
-    // If your table name is different from the default naming convention
-    protected $table = 'categories';
 
-    // If you don't want timestamps
-    public $timestamps = false;
 
     // Relationships
     public function recipes(): HasMany

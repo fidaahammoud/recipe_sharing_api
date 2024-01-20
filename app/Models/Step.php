@@ -13,7 +13,7 @@ class Step extends Model
     use HasFactory;
 
     protected $fillable = [
-        'step_description',
+        'stepDescription',
     ];
 
     public function recipe(): BelongsTo

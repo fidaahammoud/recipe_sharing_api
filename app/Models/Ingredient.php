@@ -13,7 +13,7 @@ class Ingredient extends Model
     use HasFactory;
 
     protected $fillable = [
-        'ingredient_name', 'ingredient_unit',
+        'ingredientName', 'measurementUnit',
     ];
 
     public function recipe(): BelongsTo
