@@ -17,11 +17,11 @@ class UserCollection extends ResourceCollection
         return [
             'data' => $this->collection->transform(function ($user) {
                 return [
-                    'id' => $user->username, // Change this line to use the custom primary key
+                    'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
                     'username' => $user->username,
-                    // ... other fields you want to include ...
+                   
                 ];
             }),
         ];
