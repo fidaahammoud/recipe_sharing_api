@@ -25,6 +25,7 @@ class RecipeResource extends JsonResource
             'preparationTime' => $this->preparationTime,
             'ingredients' => IngredientResource::collection($this->whenLoaded('ingredients')),
             'steps' => StepResource::collection($this->whenLoaded('steps')),
+            'creator_id' => $this->user->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

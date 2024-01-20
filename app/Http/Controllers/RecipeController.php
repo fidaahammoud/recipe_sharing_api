@@ -12,11 +12,19 @@ use App\Http\Requests\StoreRecipeRequest;
 use App\Http\Requests\UpdateRecipeRequest;
 use App\Http\Resources\RecipeResource;
 use App\Http\Resources\RecipeCollection;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 use Illuminate\Http\Request; 
 
 class RecipeController extends Controller
 {
+
+    public function __construct()
+{
+    $this->authorizeResource(Recipe::class, 'recipe');
+}
+
     public function index(Request $request)
     {
         $recipes = QueryBuilder::for(Recipe::class)
@@ -35,45 +43,53 @@ class RecipeController extends Controller
     }
 
     public function store(StoreRecipeRequest $request)
-    {
-        $validatedData = $request->validated();
-    
-        // Create Category
-        $category = Category::firstOrCreate(['name' => $validatedData['category']]);
-        
-        // Create Recipe
-        $recipe = Recipe::create([
-            'title' => $validatedData['title'],
-            'description' => $validatedData['description'],
-            'category_id' => $category->id,
-            'preparationTime' => $validatedData['preparationTime'],
-        ]);
-    
-        // Create or find Ingredients
-        $ingredientsData = $validatedData['ingredients'];
-    
-        foreach ($ingredientsData as $ingredientData) {
-            $ingredient = new Ingredient([
-                'ingredientName' => $ingredientData['ingredientName'],
-                'measurementUnit' => $ingredientData['measurementUnit'],
-            ]);
-    
-            $recipe->ingredients()->save($ingredient);
-        }
-    
-        // Create Steps
-        $stepsData = $validatedData['preparationSteps'];
-    
-        foreach ($stepsData as $stepData) {
-            $step = new Step([
-                'stepDescription' => $stepData,
-            ]);
-    
-            $recipe->steps()->save($step);
-        }
-    
-        return new RecipeResource($recipe);
+{
+
+    if (!Auth::check()) {
+        return response()->json(['message' => 'Unauthenticated'], 401);
     }
+    
+    $validatedData = $request->validated();
+
+    // Create Category
+    $category = Category::firstOrCreate(['name' => $validatedData['category']]);
+    
+    // Create Recipe
+    $recipe = Auth::user()->recipes()->create([
+        'title' => $validatedData['title'],
+        'description' => $validatedData['description'],
+        'category_id' => $category->id,
+        'preparationTime' => $validatedData['preparationTime'],
+    ]);
+
+    // Create or find Ingredients
+    $ingredientsData = $validatedData['ingredients'];
+
+    foreach ($ingredientsData as $ingredientData) {
+        $ingredient = new Ingredient([
+            'ingredientName' => $ingredientData['ingredientName'],
+            'measurementUnit' => $ingredientData['measurementUnit'],
+        ]);
+
+        $recipe->ingredients()->save($ingredient);
+    }
+
+    // Create Steps
+    $stepsData = $validatedData['preparationSteps'];
+
+    foreach ($stepsData as $stepData) {
+        $step = new Step([
+            'stepDescription' => $stepData,
+        ]);
+
+        $recipe->steps()->save($step);
+    }
+
+    // Eager load the relationships
+    $recipe->load('category', 'ingredients', 'steps', 'user');
+
+    return new RecipeResource($recipe);
+}
     
 
     public function show(Request $request, Recipe $recipe)
@@ -83,24 +99,65 @@ class RecipeController extends Controller
     }
 
     public function update(UpdateRecipeRequest $request, Recipe $recipe)
-    {
-        $validatedData = $request->validated();
-
-        // If the category is present in the request, update it
-        if (isset($validatedData['category'])) {
-            $category = Category::firstOrCreate(['name' => $validatedData['category']]);
-            $recipe->category()->associate($category);
-        }
+{
     
-        // Update other attributes
-        $recipe->update($validatedData);
-    
-        return new RecipeResource($recipe);
+     // Check if the authenticated user is the creator of the recipe
+     if (Auth::id() !== $recipe->creator_id) {
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
+
+    $validatedData = $request->validated();
+
+    // Update the recipe's attributes
+    $recipe->update([
+        'title' => $validatedData['title'],
+        'description' => $validatedData['description'],
+        'preparationTime' => $validatedData['preparationTime'],
+    ]);
+
+    // Update the category
+    $category = Category::firstOrCreate(['name' => $validatedData['category']]);
+    $recipe->category()->associate($category)->save();
+
+    // Update or create ingredients
+    $ingredientsData = $validatedData['ingredients'];
+    $recipe->ingredients()->delete(); // Remove existing ingredients
+
+    foreach ($ingredientsData as $ingredientData) {
+        $ingredient = new Ingredient([
+            'ingredientName' => $ingredientData['ingredientName'],
+            'measurementUnit' => $ingredientData['measurementUnit'],
+        ]);
+
+        $recipe->ingredients()->save($ingredient);
+    }
+
+    // Update or create steps
+    $stepsData = $validatedData['preparationSteps'];
+    $recipe->steps()->delete(); // Remove existing steps
+
+    foreach ($stepsData as $stepData) {
+        $step = new Step([
+            'stepDescription' => $stepData,
+        ]);
+
+        $recipe->steps()->save($step);
+    }
+
+    // Eager load the relationships
+    $recipe->load('category', 'ingredients', 'steps', 'user');
+
+    return new RecipeResource($recipe);
+}
 
 
     public function destroy(Recipe $recipe)
     {
+        // Check if the authenticated user is the creator of the recipe
+        if (Auth::id() !== $recipe->user_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         $recipe->delete();
 
         return response()->json(['message' => 'Recipe deleted successfully']);
@@ -110,5 +167,18 @@ class RecipeController extends Controller
     {
         return Category::all();
     }
+
+    public function userRecipes(User $user)
+{
+    $recipes = $user->recipes;
+    $recipes->load('ingredients', 'steps'); // Eager load the relationships
+
+    // Using the RecipeResource for each recipe in the collection
+    $resource = RecipeResource::collection($recipes);
+
+    return $resource;
+
+    
+}
 
 }
