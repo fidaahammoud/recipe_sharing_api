@@ -43,53 +43,53 @@ class RecipeController extends Controller
     }
 
     public function store(StoreRecipeRequest $request)
-{
-
-    if (!Auth::check()) {
-        return response()->json(['message' => 'Unauthenticated'], 401);
-    }
+    {
     
-    $validatedData = $request->validated();
-
-    // Create Category
-    $category = Category::firstOrCreate(['name' => $validatedData['category']]);
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+        
+        $validatedData = $request->validated();
     
-    // Create Recipe
-    $recipe = Auth::user()->recipes()->create([
-        'title' => $validatedData['title'],
-        'description' => $validatedData['description'],
-        'category_id' => $category->id,
-        'preparationTime' => $validatedData['preparationTime'],
-    ]);
-
-    // Create or find Ingredients
-    $ingredientsData = $validatedData['ingredients'];
-
-    foreach ($ingredientsData as $ingredientData) {
-        $ingredient = new Ingredient([
-            'ingredientName' => $ingredientData['ingredientName'],
-            'measurementUnit' => $ingredientData['measurementUnit'],
+        // Create Category
+        $category = Category::firstOrCreate(['name' => $validatedData['category']]);
+        
+        // Create Recipe
+        $recipe = Auth::user()->recipes()->create([
+            'title' => $validatedData['title'],
+            'description' => $validatedData['description'],
+            'category_id' => $category->id,
+            'preparationTime' => $validatedData['preparationTime'],
         ]);
-
-        $recipe->ingredients()->save($ingredient);
+    
+        // Create or find Ingredients
+        $ingredientsData = $validatedData['ingredients'];
+    
+        foreach ($ingredientsData as $ingredientData) {
+            $ingredient = new Ingredient([
+                'ingredientName' => $ingredientData['ingredientName'],
+                'measurementUnit' => $ingredientData['measurementUnit'],
+            ]);
+    
+            $recipe->ingredients()->save($ingredient);
+        }
+    
+        // Create Steps
+        $stepsData = $validatedData['preparationSteps'];
+    
+        foreach ($stepsData as $stepData) {
+            $step = new Step([
+                'stepDescription' => $stepData,
+            ]);
+    
+            $recipe->steps()->save($step);
+        }
+    
+        // Eager load the relationships
+        $recipe->load('category', 'ingredients', 'steps', 'user');
+    
+        return new RecipeResource($recipe);
     }
-
-    // Create Steps
-    $stepsData = $validatedData['preparationSteps'];
-
-    foreach ($stepsData as $stepData) {
-        $step = new Step([
-            'stepDescription' => $stepData,
-        ]);
-
-        $recipe->steps()->save($step);
-    }
-
-    // Eager load the relationships
-    $recipe->load('category', 'ingredients', 'steps', 'user');
-
-    return new RecipeResource($recipe);
-}
     
 
     public function show(Request $request, Recipe $recipe)
@@ -109,11 +109,7 @@ class RecipeController extends Controller
     $validatedData = $request->validated();
 
     // Update the recipe's attributes
-    $recipe->update([
-        'title' => $validatedData['title'],
-        'description' => $validatedData['description'],
-        'preparationTime' => $validatedData['preparationTime'],
-    ]);
+    $recipe->update($validatedData);
 
     // Update the category
     $category = Category::firstOrCreate(['name' => $validatedData['category']]);

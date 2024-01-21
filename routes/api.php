@@ -57,5 +57,6 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::get('categories/{category}', [CategoryController::class, 'show']);
 
     Route::get('users', [UserController::class, 'index']);
+    Route::get('users/{user}', [UserController::class, 'show']);
     Route::get('users/{user}/recipes', [RecipeController::class, 'userRecipes']);
 });
