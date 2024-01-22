@@ -9,8 +9,7 @@ use App\Http\Controllers\StepController;
 use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-
-
+use App\Http\Controllers\CommentController;
 
 
 /*
@@ -59,4 +58,11 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::get('users', [UserController::class, 'index']);
     Route::get('users/{user}', [UserController::class, 'show']);
     Route::get('users/{user}/recipes', [RecipeController::class, 'userRecipes']);
+    Route::put('users/{user}/update', [UserController::class, 'update']);
+
+    Route::post('recipes/{recipe}/comments', [CommentController::class, 'store']);
+  
+  Route::post('recipes/{recipe}/like', [RecipeController::class, 'likeRecipe']);
+  Route::post('recipes/{recipe}/rate/{rating}', [RecipeController::class, 'rateRecipe']);
+  
 });

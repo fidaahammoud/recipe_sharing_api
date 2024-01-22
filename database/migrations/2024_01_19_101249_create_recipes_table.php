@@ -19,7 +19,9 @@ return new class extends Migration
             $table->text('description');
             $table->string('imageUrl')->nullable();
             $table->integer('preparationTime');
-            $table->text('comments')->nullable();
+            $table->text('comment')->nullable();
+            $table->unsignedInteger('totalLikes')->default(0);
+            $table->decimal('avrgRating', 3, 2)->default(0.00);
             $table->timestamps();
         });
     }

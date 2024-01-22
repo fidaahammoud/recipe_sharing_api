@@ -14,6 +14,8 @@ use App\Http\Resources\RecipeResource;
 use App\Http\Resources\RecipeCollection;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Like;
+use App\Models\Rating;
 
 use Illuminate\Http\Request; 
 
@@ -94,7 +96,7 @@ class RecipeController extends Controller
 
     public function show(Request $request, Recipe $recipe)
     {
-        $recipe->load('ingredients', 'steps'); // Eager load the relationships
+        $recipe->load('ingredients', 'steps','comments'); // Eager load the relationships
         return new RecipeResource($recipe);
     }
 
@@ -167,7 +169,7 @@ class RecipeController extends Controller
     public function userRecipes(User $user)
 {
     $recipes = $user->recipes;
-    $recipes->load('ingredients', 'steps'); // Eager load the relationships
+    $recipes->load('ingredients', 'steps','comments'); // Eager load the relationships
 
     // Using the RecipeResource for each recipe in the collection
     $resource = RecipeResource::collection($recipes);
@@ -176,5 +178,66 @@ class RecipeController extends Controller
 
     
 }
+
+
+    public function likeRecipe(Recipe $recipe)
+    {
+        // Ensure the user is authenticated
+        $user = auth()->user();
+
+        // Check if the user has already liked the recipe
+        $like = $recipe->likes()->where('user_id', $user->id)->first();
+
+        if (!$like) {
+            // If not, create a new like
+            $like = new Like(['user_id' => $user->id]);
+            $recipe->likes()->save($like);
+
+            // Increment the like count in the Recipe model
+            $recipe->increment('totalLikes');
+
+            return response()->json(['message' => 'Recipe liked successfully.']);
+        } else {
+            // If already liked, unlike it
+            $like->delete();
+
+            // Decrement the like count in the Recipe model
+            $recipe->decrement('totalLikes');
+
+            return response()->json(['message' => 'Recipe unliked successfully.']);
+        }
+    }
+
+    public function rateRecipe(Recipe $recipe, $rating)
+    {
+        // Ensure the user is authenticated
+        $user = auth()->user();
+    
+        // Check if the user has already rated the recipe
+        $existingRating = $recipe->ratings()->where('user_id', $user->id)->first();
+    
+        if ($existingRating) {
+            // If already rated, update the rating
+            $existingRating->update(['rating' => $rating]);
+        } else {
+            // If not, create a new rating
+            $ratingModel = new Rating(['user_id' => $user->id, 'rating' => $rating]);
+            $recipe->ratings()->save($ratingModel);
+        }
+    
+        // Calculate the new average rating
+        $totalRatings = $recipe->ratings()->count();
+        $sumRatings = $recipe->ratings()->sum('rating');
+        $newAverageRating = $totalRatings > 0 ? $sumRatings / $totalRatings : 0;
+    
+        // Update the average rating in the Recipe model
+        $recipe->avrgRating = $newAverageRating;
+        $recipe->save();
+    
+        return response()->json(['message' => 'Recipe rated successfully.']);
+    }
+    
+
+
 
 }

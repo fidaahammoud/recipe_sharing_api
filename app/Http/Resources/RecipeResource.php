@@ -7,6 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 use App\Http\Resources\IngredientResource;
 use App\Http\Resources\StepResource;
+use App\Http\Resources\CommentResource;
 
 class RecipeResource extends JsonResource
 {
@@ -21,10 +22,14 @@ class RecipeResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
+            'nbOfLikes' => $this->totalLikes,
+            'avrgRating' => $this->avrgRating,
+            'comment' => $this->comments,
             'category' => $this->category->name,
             'preparationTime' => $this->preparationTime,
             'ingredients' => IngredientResource::collection($this->whenLoaded('ingredients')),
             'steps' => StepResource::collection($this->whenLoaded('steps')),
+            'comments' => CommentResource::collection($this->whenLoaded('comments')),
             'creator_id' => $this->user->id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
