@@ -8,9 +8,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth', ['only' => ['logout']]);
+    }
+
     public function login(Request $request){
         $validated = $request->validate([
             'email' => 'required|email',
@@ -34,9 +41,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|max:255',
             'email' => 'required|max:255|email|unique:users,email',
-            'username' => 'required|string|unique:users,username',
             'password' => 'required|confirmed|min:6',
         ]); 
 
@@ -49,6 +54,40 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
         ],201);
     }
+
+    public function completeProfile(Request $request, User $user)
+{
+    $validator = Validator::make($request->all(), [
+        'username' => 'required|string|unique:users,username',
+        'name' => 'required|string|max:255',
+        'profilePicture' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        'bio' => 'nullable|string|max:255',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json(['error' => $validator->errors()], 400);
+    }
+
+    // Update the user's profile information
+    $user->update([
+        'username' => $request->input('username'),
+        'name' => $request->input('name'),
+        'bio' => $request->input('bio'),
+    ]);
+
+    // Handle profile picture upload
+    if ($request->hasFile('profilePicture')) {
+        $picturePath = $request->file('profilePicture')->store('profilePicture', 'public');
+        $user->update(['profilePicture' => $picturePath]);
+    }
+
+    return response()->json([
+        'message' => 'Profile completed successfully',
+        'user' => $user,
+    ]);
+}
+
+
 
     public function logout(Request $request)
     {

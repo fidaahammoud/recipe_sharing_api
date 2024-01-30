@@ -60,6 +60,7 @@ class RecipeController extends Controller
         $recipe = Auth::user()->recipes()->create([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
+            'comment' => $validatedData['comment'],
             'category_id' => $category->id,
             'preparationTime' => $validatedData['preparationTime'],
         ]);
@@ -88,7 +89,7 @@ class RecipeController extends Controller
         }
     
         // Eager load the relationships
-        $recipe->load('category', 'ingredients', 'steps', 'user');
+        $recipe->load('category', 'ingredients', 'steps', 'user','comments');
     
         return new RecipeResource($recipe);
     }
