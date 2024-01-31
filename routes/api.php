@@ -43,7 +43,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
-Route::put('completeProfile/{user}', [AuthController::class, 'completeProfile']);
+
 
 
 Route::middleware('auth:sanctum')->group(function (){
@@ -64,5 +64,8 @@ Route::middleware('auth:sanctum')->group(function (){
   
   Route::post('recipes/{recipe}/like', [RecipeController::class, 'likeRecipe']);
   Route::post('recipes/{recipe}/rate/{rating}', [RecipeController::class, 'rateRecipe']);
+
+
+  Route::put('completeProfile/{user}', [AuthController::class, 'completeProfile']);
   
 });

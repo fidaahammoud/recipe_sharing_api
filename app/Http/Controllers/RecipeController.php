@@ -37,7 +37,7 @@ class RecipeController extends Controller
         ->paginate();
 
     // Set the path for pagination links
-    $recipes->setPath('http://157.241.61.249:80/laravel/api/recipes');
+    $recipes->setPath('http://192.168.1.9:80/laravel/api/recipes');
 
     // Return the paginated results using your RecipeCollection
     return RecipeResource::collection($recipes);
@@ -63,6 +63,8 @@ class RecipeController extends Controller
             'comment' => $validatedData['comment'],
             'category_id' => $category->id,
             'preparationTime' => $validatedData['preparationTime'],
+            'imageUrl' => $validatedData['imageUrl'],
+            
         ]);
     
         // Create or find Ingredients

@@ -24,6 +24,8 @@ class RecipeResource extends JsonResource
             'description' => $this->description,
             'nbOfLikes' => $this->totalLikes,
             'avrgRating' => $this->avrgRating,
+            'imageUrl' => $this->imageUrl,
+            'comment' => $this->comment,
             'comment' => $this->comment,
             'category' => $this->category->name,
             'preparationTime' => $this->preparationTime,
