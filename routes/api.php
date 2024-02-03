@@ -27,45 +27,32 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Route::prefix('recipes')->group(function () {
-//     Route::put('/{recipe}', [RecipeController::class, 'update']);
-//     Route::delete('/{recipe}', [RecipeController::class, 'destroy']);
-// });
-// Route::get('categories', [CategoryController::class, 'index']);
-// Route::get('categories/{category}', [CategoryController::class, 'show']);
-
-
-
-//Route::get('categories/{category}/recipes', [RecipeController::class, 'show']);
-//Route::apiResource('steps', StepController::class);
-//Route::apiResource('ingredients', IngredientController::class);
-//Route::get('recipes/categories', [RecipeController::class, 'categories']);
-
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
+Route::get('categories', [CategoryController::class, 'index']);
+Route::get('categories/{category}', [CategoryController::class, 'show']);
 
+Route::get('users', [UserController::class, 'index']);
+Route::get('users/{user}', [UserController::class, 'show']);
+
+Route::get('users/{user}/recipes', [RecipeController::class, 'userRecipes']);
+
+Route::get('recipes', [RecipeController::class, 'index']);
+Route::get('recipes/{recipe}', [RecipeController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function (){
     Route::post('recipes', [RecipeController::class, 'store']);
-    Route::get('recipes', [RecipeController::class, 'index']);
-    Route::get('recipes/{recipe}', [RecipeController::class, 'show']);
     Route::put('recipes/{recipe}', [RecipeController::class, 'update']);
-    Route::delete('recipes/{recipe}', [RecipeController::class, 'destroy']);
-    Route::get('categories', [CategoryController::class, 'index']);
-    Route::get('categories/{category}', [CategoryController::class, 'show']);
-
-    Route::get('users', [UserController::class, 'index']);
-    Route::get('users/{user}', [UserController::class, 'show']);
-    Route::get('users/{user}/recipes', [RecipeController::class, 'userRecipes']);
+    Route::delete('recipes/delete/{recipe}', [RecipeController::class, 'destroy']);
     Route::put('users/{user}/update', [UserController::class, 'update']);
 
     Route::post('recipes/{recipe}/comments', [CommentController::class, 'store']);
   
-  Route::post('recipes/{recipe}/like', [RecipeController::class, 'likeRecipe']);
-  Route::post('recipes/{recipe}/rate/{rating}', [RecipeController::class, 'rateRecipe']);
+    Route::post('recipes/{recipe}/like', [RecipeController::class, 'likeRecipe']);
+    Route::post('recipes/{recipe}/rate/{rating}', [RecipeController::class, 'rateRecipe']);
 
 
-  Route::put('completeProfile/{user}', [AuthController::class, 'completeProfile']);
+    Route::put('completeProfile/{user}', [AuthController::class, 'completeProfile']);
   
 });

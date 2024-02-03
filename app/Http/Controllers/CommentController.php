@@ -7,13 +7,19 @@ use App\Models\Recipe;
 use App\Models\Comment;
 use App\Http\Resources\CommentResource;
 use App\Http\Requests\StoreCommentRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CommentController extends Controller
 {
     public function store(StoreCommentRequest $request, Recipe $recipe)
     {
+        // Check if the user is authenticated
+        if (!Auth::check()) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
         $comment = new Comment([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'content' => $request->input('content'),
         ]);
 

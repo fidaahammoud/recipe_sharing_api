@@ -22,10 +22,9 @@ class UserController extends Controller
     
     public function show(Request $request, User $user)
     {
-        // access information from the request, if needed
-        $authenticatedUserId = $request->user()->id;
-
-        
+        if ($request->user()) {
+            $authenticatedUserId = $request->user()->id;
+        }
         return new UserResource($user);
     }
     
