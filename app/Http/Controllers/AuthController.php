@@ -71,7 +71,6 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|unique:users,username,' . $user->id,
             'name' => 'required|string|max:255',
-            'profilePicture' => 'nullable|max:2048',
             'bio' => 'nullable|string|max:255',
         ]);
     
@@ -85,39 +84,6 @@ class AuthController extends Controller
             'name' => $request->input('name'),
             'bio' => $request->input('bio'),
         ]);
-    
-        // Handle image upload or save the URL (if any)
-        if ($request->hasFile('profilePicture')) {
-            $validator = Validator::make($request->all(), [
-                'profilePicture' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-            ]);
-    
-            if ($validator->fails()) {
-                return response()->json(['error' => 'Image validation failed', 'messages' => $validator->errors()], 400);
-            }
-    
-            $image = $request->file('profilePicture');
-            $filename = time() . '.' . $image->getClientOriginalExtension();
-            $uploadPath = 'C:\Users\user\Desktop\imgs'; // Replace with your desktop path
-    
-            try {
-                $image->move($uploadPath, $filename);
-                $user->update(['profilePicture' => $filename]);
-            } catch (Exception $e) {
-                return response()->json(['error' => 'Failed to upload image: ' . $e->getMessage()], 500);
-            }
-        } elseif ($request->filled('profilePicture')) {
-            // Save the URL if provided
-            $validator = Validator::make($request->all(), [
-                'profilePicture' => 'url',
-            ]);
-    
-            if ($validator->fails()) {
-                return response()->json(['error' => 'URL validation failed', 'messages' => $validator->errors()], 400);
-            }
-    
-            $user->update(['profilePicture' => $request->input('profilePicture')]);
-        }
     
         return response()->json([
             'message' => 'Profile completed successfully',
