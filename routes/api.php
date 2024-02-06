@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('image',[ImageController::class, 'imageStore']);
+
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('recipes/{recipe}/rate/{rating}', [RecipeController::class, 'rateRecipe']);
 
 
+    Route::post('image/{user}',[ImageController::class, 'profileImageStore']);
     Route::put('completeProfile/{user}', [AuthController::class, 'completeProfile']);
   
 });

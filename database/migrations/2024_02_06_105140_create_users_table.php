@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('users')) {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable();
@@ -19,12 +20,12 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('username')->unique()->nullable();
             $table->string('bio')->nullable();
-            $table->string('profilePicture')->nullable();
+            $table->foreignId('image_id')->nullable()->constrained('images')->cascadeOnDelete();
             $table->rememberToken();
             $table->timestamps();
         });
     }
-
+    }
     /**
      * Reverse the migrations.
      */

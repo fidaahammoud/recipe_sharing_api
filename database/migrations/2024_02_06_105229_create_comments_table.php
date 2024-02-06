@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('comments')) {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('recipe_id')->constrained(); // Assumes you have a recipes table
+            $table->foreignId('recipe_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->text('content');
             $table->timestamps();
         });
     }
-
+}
     /**
      * Reverse the migrations.
      */

@@ -9,22 +9,25 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+  
+	 public function up(): void
     {
-        Schema::create('ratings', function (Blueprint $table) {
+        
+        Schema::create('ingredients', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('recipe_id')->constrained();
-            $table->unsignedInteger('rating');
+            $table->foreignId('recipe_id')->constrained('recipes')->onDelete('cascade');
+            $table->string('ingredientName');
+            $table->string('measurementUnit');
             $table->timestamps();
         });
     }
+	
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('ratings');
+        Schema::dropIfExists('ingredients');
     }
 };

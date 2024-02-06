@@ -2,26 +2,42 @@
 
 namespace App\Http\Controllers;
 
-
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Image;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
+use App\Models\User;
 
 class ImageController extends Controller
 {
-    public function imageStore(Request $request)
-    {
-        $this->validate($request, [
-            'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
-        ]);
-        $image_path = $request->file('image')->store('image', 'public');
-
-        $data = Image::create([
-            'image' => $image_path,
-        ]);
-
-        return response($data, Response::HTTP_CREATED);
+    public function profileImageStore(Request $request, User $user)
+{
+    // Validate if the provided user matches the authenticated user
+    if (!Auth::user() || Auth::user()->id !== $user->id) {
+        return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
     }
+
+    // Validate the image
+    $this->validate($request, [
+        'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+    ]);
+
+    // Store the image
+    $imagePath = $request->file('image')->store('images', 'public');
+
+    // Create a new Image instance
+    $image = Image::create([
+        'image' => $imagePath,
+    ]);
+
+    // Associate the image with the user using the image_id column
+    $user->image_id = $image->id;
+    $user->save();
+
+    return response()->json($image, Response::HTTP_CREATED);
+}
+
+    
 }
