@@ -46,6 +46,9 @@ Route::get('users/{user}/recipes', [RecipeController::class, 'userRecipes']);
 Route::get('recipes', [RecipeController::class, 'index']);
 Route::get('recipes/{recipe}', [RecipeController::class, 'show']);
 
+Route::get('images', [ImageController::class, 'index']);
+Route::get('images/{id}', [ImageController::class, 'show']);
+
 Route::middleware('auth:sanctum')->group(function (){
     Route::post('recipes', [RecipeController::class, 'store']);
     Route::put('recipes/{recipe}', [RecipeController::class, 'update']);

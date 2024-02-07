@@ -10,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
@@ -51,9 +52,9 @@ class User extends Authenticatable
 
 
     public function image(): BelongsTo
-{
-    return $this->belongsTo(Image::class, 'image_id');
-}
+    {
+        return $this->belongsTo(Image::class, 'image_id');
+    }
 
     public function recipes()
     {

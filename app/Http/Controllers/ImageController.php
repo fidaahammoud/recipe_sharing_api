@@ -39,5 +39,22 @@ class ImageController extends Controller
     return response()->json($image, Response::HTTP_CREATED);
 }
 
-    
+public function index()
+{
+    $images = Image::all();
+
+    return response()->json(['data' => $images], Response::HTTP_OK);
+}
+
+
+public function show($id)
+{
+    $image = Image::find($id);
+
+    if (!$image) {
+        return response()->json(['error' => 'Image not found'], Response::HTTP_NOT_FOUND);
+    }
+
+    return response()->json(['data' => $image], Response::HTTP_OK);
+}
 }
