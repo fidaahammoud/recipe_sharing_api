@@ -13,5 +13,5 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
     $router->resource('fruits', FruitsController::class);
-
+    $router->resource('drinks', DrinkController::class);
 });
