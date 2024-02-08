@@ -10,6 +10,7 @@ use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FruitsController;
 
 use App\Http\Controllers\ImageController;
 
@@ -30,7 +31,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-
+Route::post('fruits', [FruitsController::class, 'fruits']);
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
