@@ -33,6 +33,7 @@ class AuthController extends Controller
         $user = User::where('email', $validated['email'])->first();
         
         return response()->json([
+            'user_id' => $user->id,
             'access_token' => $user->createToken('api_token')->plainTextToken,
             'token_type' => 'Bearer',
         ]);

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
             $table->text('description');
-            $table->string('imageUrl')->nullable();
+            $table->foreignId('image_id')->nullable()->constrained('images')->cascadeOnDelete();
             $table->integer('preparationTime');
             $table->text('comment')->nullable();
             $table->unsignedInteger('totalLikes')->default(0);

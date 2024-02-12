@@ -10,13 +10,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Like;
+use App\Models\Image;
+use App\Models\User;
+
 
 class Recipe extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'title', 'category_id', 'description', 'imageUrl', 'preparationTime', 'comment','totalLikes','avrgRating',
+        'title', 'category_id', 'description', 'preparationTime', 'comment','totalLikes','avrgRating',
     ];
 
     public function category(): BelongsTo
@@ -42,6 +45,11 @@ class Recipe extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class, 'recipe_id');
+    }
+
+    public function image(): BelongsTo
+    {
+        return $this->belongsTo(Image::class, 'image_id');
     }
 
     public function likes(): HasMany
