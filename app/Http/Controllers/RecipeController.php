@@ -32,7 +32,7 @@ class RecipeController extends Controller
         ->paginate();
 
     // Set the path for pagination links
-    $recipes->setPath('http://192.168.1.9:80/laravel/api/recipes');
+    $recipes->setPath('http://192.168.56.10:80/laravel/api/recipes');
 
     // Return the paginated results using your RecipeCollection
     return RecipeResource::collection($recipes);

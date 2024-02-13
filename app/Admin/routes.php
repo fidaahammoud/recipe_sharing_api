@@ -18,4 +18,5 @@ Route::group([
     $router->resource('recipes', RecipeController::class);
     $router->resource('images', ImageController::class);
     $router->resource('users', UserController::class);
+    $router->resource('categories', CategoryController::class);
 });
