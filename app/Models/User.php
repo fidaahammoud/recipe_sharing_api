@@ -11,6 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Recipe;
 use App\Models\User;
 
@@ -58,8 +59,14 @@ class User extends Authenticatable
         return $this->belongsTo(Image::class, 'image_id');
     }
 
-    public function recipes()
+    public function recipes(): HasMany
     {
         return $this->hasMany(Recipe::class, 'creator_id');
     }
+
+    public function favorites(): BelongsToMany
+    {
+        return $this->belongsToMany(Recipe::class, 'favorite')->withTimestamps();
+    }
+
 }

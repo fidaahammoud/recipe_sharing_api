@@ -12,7 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CommentController;
 
 use App\Http\Controllers\ImageController;
-
+use App\Http\Controllers\FavoriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,4 +65,7 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::put('completeProfile/{user}', [AuthController::class, 'completeProfile']);
     Route::post('image/{user}/recipe/{recipe}', [ImageController::class, 'recipeImageStore']);
 
+
+    Route::post('recipes/{recipe}/addToFavorite', [FavoriteController::class, 'addToFavorites']);
+    Route::get('users/{user}/favorites', [FavoriteController::class, 'index']);
 });
