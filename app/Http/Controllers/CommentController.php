@@ -25,6 +25,7 @@ class CommentController extends Controller
 
         $recipe->comments()->save($comment);
 
-        return new CommentResource($comment);
+        //return new CommentResource($comment);
+        return response()->json(['message' => 'Comment added successfully']);
     }
 }

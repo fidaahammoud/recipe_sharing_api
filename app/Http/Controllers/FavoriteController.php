@@ -47,13 +47,13 @@ class FavoriteController extends Controller
         }
     
         try {
-            $favorites = $user->favorites()->with('category', 'user')->get();
+            $favorites = $user->favorites()->with('ingredients', 'steps','comments')->get();
     
             if ($favorites->isEmpty()) {
                 return response()->json(['message' => 'No favorite recipes found.'], 404);
             }
     
-            return response()->json(['favorites' => $favorites]);
+            return response()->json(['data' => $favorites]);
         } catch (\Exception $e) {
             // Handle any exceptions or errors
             return response()->json(['message' => 'Error occurred while fetching favorite recipes.'], 500);
