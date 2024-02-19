@@ -41,7 +41,7 @@ class ImageController extends Controller
     return response()->json($image, Response::HTTP_CREATED);
 }
 
-public function recipeImageStore(Request $request, User $user, Recipe $recipe)
+public function recipeImageStore(Request $request, User $user)
 {
     // Validate if the provided user matches the authenticated user
     if (!Auth::user() || Auth::user()->id !== $user->id) {
@@ -62,8 +62,8 @@ public function recipeImageStore(Request $request, User $user, Recipe $recipe)
     ]);
 
      //Associate the image with the recipe using the image_id column
-    $recipe->image_id = $image->id;
-    $recipe->save();
+    //$recipe->image_id = $image->id;
+    //$recipe->save();
 
     return response()->json($image, Response::HTTP_CREATED);
 }

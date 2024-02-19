@@ -58,6 +58,7 @@ class RecipeController extends Controller
             'comment' => $validatedData['comment'],
             'category_id' => $category->id,
             'preparationTime' => $validatedData['preparationTime'],
+            'image_id' => $validatedData['image_id'],
             
         ]);
     

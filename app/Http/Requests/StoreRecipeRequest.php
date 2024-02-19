@@ -32,6 +32,7 @@ class StoreRecipeRequest extends FormRequest
             'ingredients.*.measurementUnit' => 'required|string|max:50',
             'preparationSteps' => 'required|array|min:1',
             'preparationSteps.*' => 'required|string',
+            'image_id' => 'required',
         ];
     }
 }

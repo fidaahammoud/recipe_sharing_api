@@ -62,7 +62,7 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::post('image/{user}',[ImageController::class, 'profileImageStore']);
     Route::put('completeProfile/{user}', [AuthController::class, 'completeProfile']);
-    Route::post('image/{user}/recipe/{recipe}', [ImageController::class, 'recipeImageStore']);
+    Route::post('image/{user}/recipe', [ImageController::class, 'recipeImageStore']);
 
 
     Route::post('recipes/{recipe}/addToFavorite', [FavoriteController::class, 'addToFavorites']);
