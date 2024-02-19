@@ -21,4 +21,5 @@ Route::group([
     $router->resource('categories', CategoryController::class);
 
     $router->resource('rapports', RapportController::class);
+    $router->resource('pdf', PdfController::class);
 });

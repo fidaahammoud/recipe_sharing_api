@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->constrained('categories')->cascadeOnDelete();
             $table->date('startDate');
             $table->date('endDate');
-            $table->string('guid')->nullable();
+            $table->string('url');
+            $table->string('guid');
             $table->timestamps();
         });
     }

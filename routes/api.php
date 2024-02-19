@@ -53,7 +53,6 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('recipes', [RecipeController::class, 'store']);
     Route::put('recipes/{recipe}', [RecipeController::class, 'update']);
     Route::delete('recipes/delete/{recipe}', [RecipeController::class, 'destroy']);
-    Route::put('users/{user}/update', [UserController::class, 'update']);
 
     Route::post('recipes/{recipe}/comments', [CommentController::class, 'store']);
   
@@ -68,4 +67,10 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::post('recipes/{recipe}/addToFavorite', [FavoriteController::class, 'addToFavorites']);
     Route::get('users/{user}/favorites', [FavoriteController::class, 'index']);
+    Route::put('updatePersonalInformation/{user}', [UserController::class, 'updatePersonalInformation']);
+
+    
+
+
+
 });

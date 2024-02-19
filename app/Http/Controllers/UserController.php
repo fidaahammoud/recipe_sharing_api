@@ -10,6 +10,8 @@ use App\Models\User;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserCollection;
 use App\Http\Requests\UpdateUserRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 class UserController extends Controller
 {
     public function index(Request $request)
@@ -28,29 +30,49 @@ class UserController extends Controller
         return new UserResource($user);
     }
     
-    public function update(UpdateUserRequest $request, User $user)
-    {
-        $this->authorize('update', $user);
 
-        // Ensure the authenticated user is the same as the user being updated
-        if ($request->user()->id !== $user->id) {
-            return response()->json(['message' => 'Unauthorized action.'], 403);
+    public function updatePersonalInformation(Request $request, User $user)
+    {
+        // Ensure the user is authenticated
+        if (!Auth::check()) {
+            return response()->json(['error' => 'Unauthenticated'], 401);
         }
     
-        // Update user information based on the validated data
-        $user->update($request->validated());
-    
-        // Handle profile picture update if provided
-        if ($request->hasFile('profilePicture')) {
-            $profilePicturePath = $request->file('profilePicture')->store('profile_pictures', 'public');
-            $user->profilePicture = $profilePicturePath;
-            $user->save();
+        // Check if the authenticated user matches the user whose profile is being updated
+        if (Auth::id() !== $user->id) {
+            return response()->json(['error' => 'Unauthorized access'], 403);
         }
+    
+        $validator = Validator::make($request->all(), [
+            'username' => 'sometimes|string|unique:users,username,' . $user->id,
+            'name' => 'sometimes|string|max:255',
+            'bio' => 'sometimes|string|max:255',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json(['error' => 'Validation failed', 'messages' => $validator->errors()], 400);
+        }
+    
+        // Determine which attributes to update
+        $attributesToUpdate = [];
+        if ($request->filled('username')) {
+            $attributesToUpdate['username'] = $request->input('username');
+        }
+        if ($request->filled('name')) {
+            $attributesToUpdate['name'] = $request->input('name');
+        }
+        if ($request->filled('bio')) {
+            $attributesToUpdate['bio'] = $request->input('bio');
+        }
+    
+        // Update user's basic information
+        $user->update($attributesToUpdate);
     
         return response()->json([
-            'message' => 'User information updated successfully.',
-            'data' => new UserResource($user),
+            'message' => 'Personal information updated successfully',
+            'user' => $user,
         ]);
-    } 
-
+    }
+    
+    
 }

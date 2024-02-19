@@ -38,6 +38,7 @@ class RapportController extends AdminController
         $grid->column('startDate', __('StartDate'));
         $grid->column('endDate', __('EndDate'));
         $grid->column('guid', __('Guid'));
+        $grid->column('url', __('Url'));
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
@@ -71,6 +72,7 @@ class RapportController extends AdminController
         $show->field('startDate', __('StartDate'));
         $show->field('endDate', __('EndDate'));
         $show->field('guid', __('Guid'));
+        $show->field('url', __('Url'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 
@@ -94,6 +96,8 @@ class RapportController extends AdminController
         $guidWithoutDashes = Str::orderedUuid();
         $form->text('guid', __('Guid'))->value($guidWithoutDashes)->readonly(true);
 
+        $url= "http://". "" . env('SERVER_IP'). "" ."/admin/pdf?guid=$guidWithoutDashes";
+        $form->text('url', __('Url'))->value($url)->readonly(true);
         
         
         return $form;
