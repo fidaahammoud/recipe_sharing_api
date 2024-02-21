@@ -25,7 +25,7 @@ class Recipe extends Model
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function steps(): HasMany
@@ -45,10 +45,10 @@ class Recipe extends Model
 
     public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class, 'recipe_id');
+        return $this->hasMany(Comment::class);
     }
 
-    public function image(): BelongsTo
+    public function images()
     {
         return $this->belongsTo(Image::class, 'image_id');
     }
@@ -65,7 +65,7 @@ class Recipe extends Model
    
     public function favoritedBy(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'favorite')->withTimestamps();
+        return $this->belongsToMany(User::class)->withTimestamps();
     }
     
 

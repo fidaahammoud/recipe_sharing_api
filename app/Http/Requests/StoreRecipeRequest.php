@@ -24,7 +24,7 @@ class StoreRecipeRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'category' => 'required|exists:categories,name',
+            'category_id' => 'required',
             'comment' => 'sometimes|string|max:1000',
             'preparationTime' => 'required|integer|min:1',
             'ingredients' => 'required|array|min:1',

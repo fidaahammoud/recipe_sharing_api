@@ -8,6 +8,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\IngredientResource;
 use App\Http\Resources\StepResource;
 use App\Http\Resources\CommentResource;
+use App\Http\Resources\ImageResource;
+
 
 class RecipeResource extends JsonResource
 {
@@ -24,7 +26,7 @@ class RecipeResource extends JsonResource
             'description' => $this->description,
             'nbOfLikes' => $this->totalLikes,
             'avrgRating' => $this->avrgRating,
-            'image_id' => $this->image ? $this->image->id : null,
+            'images' => ImageResource::collection($this->whenLoaded('images')),
             'comment' => $this->comment,
             'comment' => $this->comment,
             'category' => $this->category->name,

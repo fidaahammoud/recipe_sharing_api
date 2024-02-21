@@ -28,15 +28,15 @@ class RecipeController extends Controller
         ->allowedFilters(['category.name'])
         ->defaultSort('-created_at')
         ->allowedSorts(['preparationTime', 'created_at'])
-        ->with('ingredients', 'steps','comments')
+        ->with('ingredients', 'steps','comments','images')
         ->paginate();
 
-    // Set the path for pagination links
-    $recipes->setPath('http://192.168.56.10:80/laravel/api/recipes');
+        // Set the path for pagination links
+        $recipes->setPath('http://192.168.56.10:80/laravel/api/recipes');
 
-    // Return the paginated results using your RecipeCollection
-    return RecipeResource::collection($recipes);
-        
+        // Return the paginated results using your RecipeCollection
+        // return RecipeResource::collection($recipes);
+        return $recipes;
     }
 
     public function store(StoreRecipeRequest $request)
@@ -48,15 +48,13 @@ class RecipeController extends Controller
         
         $validatedData = $request->validated();
     
-        // Create Category
-        $category = Category::firstOrCreate(['name' => $validatedData['category']]);
-        
+    
         // Create Recipe
         $recipe = Auth::user()->recipes()->create([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'comment' => $validatedData['comment'],
-            'category_id' => $category->id,
+            'category_id' =>  $validatedData['category_id'],
             'preparationTime' => $validatedData['preparationTime'],
             'image_id' => $validatedData['image_id'],
             
@@ -86,9 +84,8 @@ class RecipeController extends Controller
         }
     
         // Eager load the relationships
-        $recipe->load('category', 'ingredients', 'steps', 'user','comments');
-    
-        return new RecipeResource($recipe);
+        $recipe->load('category', 'ingredients', 'steps', 'user','comments','images');
+        return $recipe;
     }
     
 
