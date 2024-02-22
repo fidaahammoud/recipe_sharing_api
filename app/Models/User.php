@@ -54,7 +54,7 @@ class User extends Authenticatable
     ];
 
 
-    public function image(): BelongsTo
+    public function images(): BelongsTo
     {
         return $this->belongsTo(Image::class, 'image_id');
     }

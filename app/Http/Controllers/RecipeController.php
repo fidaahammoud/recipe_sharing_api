@@ -28,7 +28,7 @@ class RecipeController extends Controller
         ->allowedFilters(['category.name'])
         ->defaultSort('-created_at')
         ->allowedSorts(['preparationTime', 'created_at'])
-        ->with('ingredients', 'steps','comments','images')
+        ->with('ingredients','user.images', 'steps','comments','images')
         ->paginate();
 
         // Set the path for pagination links
@@ -91,8 +91,8 @@ class RecipeController extends Controller
 
     public function show(Request $request, Recipe $recipe)
     {
-        $recipe->load('ingredients', 'steps','comments'); // Eager load the relationships
-        return new RecipeResource($recipe);
+        $recipe->load('user.images','ingredients', 'steps','comments');
+        return $recipe;
     }
 
     public function update(UpdateRecipeRequest $request, Recipe $recipe)
@@ -170,13 +170,21 @@ class RecipeController extends Controller
 
     public function userRecipes(User $user)
 {
+    // $recipes = $user->recipes;
+    // $recipes->load('user.images','ingredients', 'steps','comments'); // Eager load the relationships
+
+    //  Using the RecipeResource for each recipe in the collection
+    // $resource = RecipeResource::collection($recipes);
+
+
+    // return $resource;
+
     $recipes = $user->recipes;
-    $recipes->load('ingredients', 'steps','comments'); // Eager load the relationships
+    $recipes->load('ingredients','user.images', 'steps','comments','images'); // Eager load the relationships
 
-    // Using the RecipeResource for each recipe in the collection
-    $resource = RecipeResource::collection($recipes);
-
-    return $resource;
+    return  [
+        'data' => $recipes // Wrap the recipes in a 'data' field
+    ];
 
     
 }

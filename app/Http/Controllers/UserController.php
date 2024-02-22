@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 //use Illuminate\Support\Facades\Gate;
 use App\Policies\UserPolicy;
-
+use Spatie\QueryBuilder\QueryBuilder;
 use App\Models\User; 
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserCollection;
@@ -16,9 +16,21 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::all();
+       // $users = User::all();
 
-        return new UserCollection($users);
+       // return  $users;
+
+
+       $users  = QueryBuilder::for(User::class)
+        ->with('images')
+        ->paginate();
+
+        // Set the path for pagination links
+        $users->setPath('http://192.168.56.10:80/laravel/api/users');
+
+        // Return the paginated results using your RecipeCollection
+        // return RecipeResource::collection($recipes);
+        return $users;
     }
 
     
@@ -27,7 +39,9 @@ class UserController extends Controller
         if ($request->user()) {
             $authenticatedUserId = $request->user()->id;
         }
-        return new UserResource($user);
+
+        $user->load('images');
+        return  $user;
     }
     
 
