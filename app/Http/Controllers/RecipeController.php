@@ -91,7 +91,7 @@ class RecipeController extends Controller
 
     public function show(Request $request, Recipe $recipe)
     {
-        $recipe->load('user.images','ingredients', 'steps','comments');
+        $recipe->load('user.images','ingredients', 'steps','comments','images');
         return $recipe;
     }
 
@@ -205,7 +205,9 @@ class RecipeController extends Controller
             // Increment the like count in the Recipe model
             $recipe->increment('totalLikes');
 
-            return response()->json(['message' => 'Recipe liked successfully.']);
+            $nbOfLikes = $recipe->totalLikes;
+
+            return response()->json(['message' => 'Recipe liked successfully.', 'nbOfLikes' => $nbOfLikes]);
         } else {
             // If already liked, unlike it
             $like->delete();

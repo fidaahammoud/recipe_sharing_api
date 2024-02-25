@@ -85,6 +85,7 @@ class UserController extends Controller
         return response()->json([
             'message' => 'Personal information updated successfully',
             'user' => $user,
+            
         ]);
     }
     
