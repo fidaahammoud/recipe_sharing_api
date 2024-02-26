@@ -19,7 +19,7 @@ class CategoryController extends Controller
 
     public function show(Category $category)
     {
-        $category->load('recipes');
+        $category->load('recipes.user.images','recipes.images');
 
         return $category;
     }
