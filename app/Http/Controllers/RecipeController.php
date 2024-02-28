@@ -28,7 +28,7 @@ class RecipeController extends Controller
         ->allowedFilters(['category.name'])
         ->defaultSort('-created_at')
         ->allowedSorts(['preparationTime', 'created_at'])
-        ->with('ingredients','user.images', 'steps','comments','images')
+        ->with('ingredients','user.images', 'steps','comments','images','category')
         ->paginate();
 
         // Set the path for pagination links
@@ -180,7 +180,7 @@ class RecipeController extends Controller
     // return $resource;
 
     $recipes = $user->recipes;
-    $recipes->load('ingredients','user.images', 'steps','comments','images'); // Eager load the relationships
+    $recipes->load('ingredients','user.images', 'steps','comments','images','category'); // Eager load the relationships
 
     return  [
         'data' => $recipes // Wrap the recipes in a 'data' field
@@ -214,8 +214,9 @@ class RecipeController extends Controller
 
             // Decrement the like count in the Recipe model
             $recipe->decrement('totalLikes');
+            $nbOfLikes = $recipe->totalLikes;
 
-            return response()->json(['message' => 'Recipe unliked successfully.']);
+            return response()->json(['message' => 'Recipe unliked successfully.','nbOfLikes' => $nbOfLikes]);
         }
     }
 

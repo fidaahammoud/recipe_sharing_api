@@ -50,7 +50,7 @@ class FavoriteController extends Controller
             $favorites = $user->favorites()->with('ingredients','user.images', 'steps','comments','images')->get();
     
             if ($favorites->isEmpty()) {
-                return response()->json(['message' => 'No favorite recipes found.'], 404);
+                return response()->json(['message' => 'No favorite recipes found.','data' => $favorites]);
             }
     
             return response()->json(['data' => $favorites]);
