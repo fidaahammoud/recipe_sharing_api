@@ -24,8 +24,8 @@ class CommentController extends Controller
         ]);
 
         $recipe->comments()->save($comment);
-
+        $recipe->load('comments.user.images');
         //return new CommentResource($comment);
-        return response()->json(['message' => 'Comment added successfully']);
+        return response()->json(['message' => 'Comment added successfully','data' =>  $recipe]);
     }
 }

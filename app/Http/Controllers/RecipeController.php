@@ -28,7 +28,7 @@ class RecipeController extends Controller
         ->allowedFilters(['category.name'])
         ->defaultSort('-created_at')
         ->allowedSorts(['preparationTime', 'created_at'])
-        ->with('ingredients','user.images', 'steps','comments','images','category')
+        ->with('ingredients','user.images', 'steps','comments.user.images','images','category')
         ->paginate();
 
         // Set the path for pagination links
@@ -84,14 +84,14 @@ class RecipeController extends Controller
         }
     
         // Eager load the relationships
-        $recipe->load('category', 'ingredients', 'steps', 'user','comments','images');
+        $recipe->load('category', 'ingredients', 'steps', 'user','comments.user.images','images');
         return $recipe;
     }
     
 
     public function show(Request $request, Recipe $recipe)
     {
-        $recipe->load('user.images','ingredients', 'steps','comments','images');
+        $recipe->load('user.images','ingredients', 'steps','comments.user.images','images');
         return $recipe;
     }
 
@@ -143,7 +143,7 @@ class RecipeController extends Controller
         }
     
         // Eager load the relationships
-        $recipe->load('category', 'ingredients', 'steps', 'user','comments');
+        $recipe->load('category', 'ingredients', 'steps', 'user','comments.user.images');
     
         return new RecipeResource($recipe);
     }
@@ -180,7 +180,7 @@ class RecipeController extends Controller
     // return $resource;
 
     $recipes = $user->recipes;
-    $recipes->load('ingredients','user.images', 'steps','comments','images','category'); // Eager load the relationships
+    $recipes->load('ingredients','user.images', 'steps','comments.user.images','images','category'); // Eager load the relationships
 
     return  [
         'data' => $recipes // Wrap the recipes in a 'data' field
@@ -246,7 +246,9 @@ class RecipeController extends Controller
         $recipe->avrgRating = $newAverageRating;
         $recipe->save();
     
-        return response()->json(['message' => 'Recipe rated successfully.']);
+        // Return the response with average rating included
+        return response()->json(['message' => 'Recipe rated successfully.', 'avgRating' => $newAverageRating]);
     }
+    
     
 }

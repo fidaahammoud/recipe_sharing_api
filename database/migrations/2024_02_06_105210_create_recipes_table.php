@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('preparationTime');
             $table->text('comment')->nullable();
             $table->unsignedInteger('totalLikes')->default(0);
-            $table->decimal('avrgRating', 3, 2)->default(0.00);
+            $table->decimal('avrgRating', 3, 1)->default(0.00);
             $table->timestamps();
         });
     }
