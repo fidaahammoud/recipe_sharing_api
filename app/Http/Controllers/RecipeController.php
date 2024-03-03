@@ -95,64 +95,61 @@ class RecipeController extends Controller
         return $recipe;
     }
 
-    public function update(UpdateRecipeRequest $request, Recipe $recipe)
+    public function update(Request $request, Recipe $recipe)
     {
         // Check if the authenticated user is the creator of the recipe
         if (Auth::id() !== $recipe->creator_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
     
-        $validatedData = $request->validated();
+        // Get the validated data from the request
+        $validatedData = $request->validate([
+            'title' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'preparationTime' => 'sometimes|integer',
+            'ingredients' => 'sometimes|array',
+            'ingredients.*.ingredientName' => 'sometimes|string',
+            'ingredients.*.measurementUnit' => 'sometimes|string',
+            'preparationSteps' => 'sometimes|array',
+            'preparationSteps.*' => 'sometimes|string',
+            'image_id' => 'sometimes|integer',
+            'comment' => 'sometimes|string',
+
+        ]);
     
-        // Update the recipe's attributes
+        // Update Recipe with only the provided fields
         $recipe->update($validatedData);
     
-        // Update or create category if it exists in the request
-        if (array_key_exists('category', $validatedData)) {
-            $category = Category::firstOrCreate(['name' => $validatedData['category']]);
-            $recipe->category()->associate($category)->save();
-        }
-    
-        // Update or create ingredients
+        // Update or create Ingredients
         if (isset($validatedData['ingredients'])) {
-            $ingredientsData = $validatedData['ingredients'];
             $recipe->ingredients()->delete(); // Remove existing ingredients
     
-            foreach ($ingredientsData as $ingredientData) {
-                $ingredient = new Ingredient([
-                    'ingredientName' => $ingredientData['ingredientName'],
-                    'measurementUnit' => $ingredientData['measurementUnit'],
-                ]);
-    
-                $recipe->ingredients()->save($ingredient);
+            foreach ($validatedData['ingredients'] as $ingredientData) {
+                $recipe->ingredients()->create($ingredientData);
             }
         }
     
-        // Update or create steps
+        // Update Steps
         if (isset($validatedData['preparationSteps'])) {
-            $stepsData = $validatedData['preparationSteps'];
             $recipe->steps()->delete(); // Remove existing steps
     
-            foreach ($stepsData as $stepData) {
-                $step = new Step([
-                    'stepDescription' => $stepData,
-                ]);
-    
-                $recipe->steps()->save($step);
+            foreach ($validatedData['preparationSteps'] as $stepData) {
+                $recipe->steps()->create(['stepDescription' => $stepData]);
             }
         }
     
         // Eager load the relationships
-        $recipe->load('category', 'ingredients', 'steps', 'user','comments.user.images');
+        $recipe->load('category', 'ingredients', 'steps', 'user', 'comments.user.images');
     
-        return new RecipeResource($recipe);
+        return $recipe;
     }
+    
     
 
     public function destroy(Recipe $recipe)
     {
         // Check if the authenticated user is the creator of the recipe
-        if (Auth::id() !== $recipe->user_id) {
+        if (Auth::id() !== $recipe->creator_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
