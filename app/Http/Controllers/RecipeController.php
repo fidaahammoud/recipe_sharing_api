@@ -18,6 +18,7 @@ use App\Models\Like;
 use App\Models\Rating;
 
 use Illuminate\Http\Request; 
+use Illuminate\Database\Eloquent\Builder;
 
 class RecipeController extends Controller
 {
@@ -91,7 +92,7 @@ class RecipeController extends Controller
 
     public function show(Request $request, Recipe $recipe)
     {
-        $recipe->load('user.images','ingredients', 'steps','comments.user.images','images');
+        $recipe->load('user.images','ingredients', 'steps','comments.user.images','images','category');
         return $recipe;
     }
 
@@ -107,6 +108,7 @@ class RecipeController extends Controller
             'title' => 'sometimes|string|max:255',
             'description' => 'sometimes|string',
             'preparationTime' => 'sometimes|integer',
+            'category_id' => 'sometimes|integer',
             'ingredients' => 'sometimes|array',
             'ingredients.*.ingredientName' => 'sometimes|string',
             'ingredients.*.measurementUnit' => 'sometimes|string',
@@ -167,20 +169,11 @@ class RecipeController extends Controller
 
     public function userRecipes(User $user)
 {
-    // $recipes = $user->recipes;
-    // $recipes->load('user.images','ingredients', 'steps','comments'); // Eager load the relationships
-
-    //  Using the RecipeResource for each recipe in the collection
-    // $resource = RecipeResource::collection($recipes);
-
-
-    // return $resource;
-
     $recipes = $user->recipes;
     $recipes->load('ingredients','user.images', 'steps','comments.user.images','images','category'); // Eager load the relationships
 
     return  [
-        'data' => $recipes // Wrap the recipes in a 'data' field
+        'data' => $recipes 
     ];
 
     
@@ -246,6 +239,42 @@ class RecipeController extends Controller
         // Return the response with average rating included
         return response()->json(['message' => 'Recipe rated successfully.', 'avgRating' => $newAverageRating]);
     }
+
+
+    
+    public function search(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string|min:3',
+        ]);
+    
+        $searchQuery = $request->input('query');
+    
+        $results = Recipe::where('title', 'like', "%$searchQuery%")
+                         ->orWhere('description', 'like', "%$searchQuery%")
+                         ->orWhere('preparationTime', 'like', "%$searchQuery%")
+                         ->orWhereHas('ingredients', function ($query) use ($searchQuery) {
+                             $query->where('ingredientName', 'like', "%$searchQuery%")
+                                    ->orWhere('measurementUnit', 'like', "%$searchQuery%");
+
+                         })
+                         ->orWhereHas('user', function ($query) use ($searchQuery) {
+                             $query->where('name', 'like', "%$searchQuery%")
+                                   ->orWhere('username', 'like', "%$searchQuery%");
+                         })
+                         ->orWhereHas('category', function ($query) use ($searchQuery) {
+                             $query->where('name', 'like', "%$searchQuery%");
+                         })
+                         ->get();
+    
+        // Return the results as JSON
+        return response()->json($results);
+    }
+    
+    
+    
+    
+    
     
     
 }
