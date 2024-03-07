@@ -28,7 +28,7 @@ class RecipeController extends Controller
         $recipes = QueryBuilder::for(Recipe::class)
         ->allowedFilters(['category.name'])
         ->defaultSort('-created_at')
-        ->allowedSorts(['preparationTime', 'created_at'])
+        ->allowedSorts(['preparationTime', 'created_at','totalLikes','avrgRating'])
         ->with('ingredients','user.images', 'steps','comments.user.images','images','category')
         ->paginate();
 
