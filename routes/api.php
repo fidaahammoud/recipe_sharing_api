@@ -43,7 +43,7 @@ Route::get('users/{user}', [UserController::class, 'show']);
 
 Route::get('users/{user}/recipes', [RecipeController::class, 'userRecipes']);
 
-Route::get('recipes/search', [RecipeController::class, 'search']);
+Route::post('recipes/search', [RecipeController::class, 'search']);
 
 Route::get('recipes', [RecipeController::class, 'index']);
 Route::get('recipes/{recipe}', [RecipeController::class, 'show']);

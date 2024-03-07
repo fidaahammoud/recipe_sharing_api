@@ -170,7 +170,7 @@ class RecipeController extends Controller
     public function userRecipes(User $user)
 {
     $recipes = $user->recipes;
-    $recipes->load('ingredients','user.images', 'steps','comments.user.images','images','category'); // Eager load the relationships
+    $recipes->load('ingredients','user.images', 'steps','comments.user.images','images','category'); 
 
     return  [
         'data' => $recipes 
@@ -245,7 +245,7 @@ class RecipeController extends Controller
     public function search(Request $request)
     {
         $request->validate([
-            'query' => 'required|string|min:3',
+            'query' => 'required|string',
         ]);
     
         $searchQuery = $request->input('query');
@@ -266,9 +266,12 @@ class RecipeController extends Controller
                              $query->where('name', 'like', "%$searchQuery%");
                          })
                          ->get();
-    
-        // Return the results as JSON
-        return response()->json($results);
+        $results->load('ingredients','user.images', 'steps','comments.user.images','images','category');
+        
+
+        return  [
+            'data' => $results
+        ];
     }
     
     
