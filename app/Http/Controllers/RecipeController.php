@@ -32,11 +32,8 @@ class RecipeController extends Controller
         ->with('ingredients','user.images', 'steps','comments.user.images','images','category')
         ->paginate();
 
-        // Set the path for pagination links
         $recipes->setPath('http://192.168.56.10:80/laravel/api/recipes');
 
-        // Return the paginated results using your RecipeCollection
-        // return RecipeResource::collection($recipes);
         return $recipes;
     }
 

@@ -59,27 +59,25 @@ class AuthController extends Controller
 
     public function completeProfile(Request $request, User $user)
     {
-        // Ensure the user is authenticated
         if (!Auth::check()) {
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
     
-        // Check if the authenticated user matches the user whose profile is being updated
         if (Auth::id() !== $user->id) {
             return response()->json(['error' => 'Unauthorized access'], 403);
         }
     
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|unique:users,username,' . $user->id,
-            'name' => 'required|string|max:255',
+            'username' => 'required|string|unique:users,username|max:255|min:3,' . $user->id,
+            'name' => 'required|string|max:255|min:3',
             'bio' => 'nullable|string|max:255',
         ]);
     
         if ($validator->fails()) {
-            return response()->json(['error' => 'Validation failed', 'messages' => $validator->errors()], 400);
+            $errors = $validator->errors()->all();
+            return response()->json(['error' => 'Validation failed', 'message' => $errors], 400);
         }
     
-        // Update user's basic information
         $user->update([
             'username' => $request->input('username'),
             'name' => $request->input('name'),
