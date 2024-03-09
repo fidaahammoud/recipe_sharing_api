@@ -60,7 +60,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'username' => 'sometimes|string|unique:users,username,' . $user->id,
             'name' => 'sometimes|string|max:255',
-            'bio' => 'sometimes|string|max:255',
+            'bio' => 'sometimes|nullable|string|max:255',
         ]);
     
         if ($validator->fails()) {
@@ -75,9 +75,7 @@ class UserController extends Controller
         if ($request->filled('name')) {
             $attributesToUpdate['name'] = $request->input('name');
         }
-        if ($request->filled('bio')) {
-            $attributesToUpdate['bio'] = $request->input('bio');
-        }
+        $attributesToUpdate['bio'] = $request->filled('bio') ? $request->input('bio') : null;
     
         // Update user's basic information
         $user->update($attributesToUpdate);
