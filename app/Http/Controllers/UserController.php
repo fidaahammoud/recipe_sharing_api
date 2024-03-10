@@ -58,13 +58,15 @@ class UserController extends Controller
         }
     
         $validator = Validator::make($request->all(), [
-            'username' => 'sometimes|string|unique:users,username,' . $user->id,
-            'name' => 'sometimes|string|max:255',
+            'username' => 'sometimes|string|min:3|unique:users,username,' . $user->id,
+            'name' => 'sometimes|string|max:255|min:3',
             'bio' => 'sometimes|nullable|string|max:255',
         ]);
     
         if ($validator->fails()) {
-            return response()->json(['error' => 'Validation failed', 'messages' => $validator->errors()], 400);
+            //return response()->json(['error' => 'Validation failed', 'message' => $validator->errors()], 400);
+            $errors = $validator->errors()->all();
+            return response()->json(['error' => 'Validation failed', 'message' => $errors], 400);
         }
     
         // Determine which attributes to update
