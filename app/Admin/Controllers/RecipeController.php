@@ -35,8 +35,8 @@ class RecipeController extends AdminController
         $grid->column('category.name', __('Category')); // Accessing category name through the relationship
         //$grid->column('category_id', __('Category id'));
         $grid->column('description', __('Description'));
-        //$grid->column('image_id', __('Image id'));
-        $grid->column('image.image', __('Image')); 
+        $grid->column('image_id', __('Image id'));
+        //$grid->column('image.image', __('Image')); 
         $grid->column('preparationTime', __('PreparationTime'));
         $grid->column('comment', __('Comment'));
         $grid->column('totalLikes', __('TotalLikes'));
