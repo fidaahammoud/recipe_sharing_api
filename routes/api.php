@@ -10,9 +10,10 @@ use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\FavoriteController;
 
 use App\Http\Controllers\ImageController;
-use App\Http\Controllers\FavoriteController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -71,8 +72,9 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::get('users/{user}/favorites', [FavoriteController::class, 'index']);
     Route::put('updatePersonalInformation/{user}', [UserController::class, 'updatePersonalInformation']);
 
-    
-
+    Route::post('users/{user}/toggleFollow', [UserController::class, 'toggleFollow']);
+    //Route::post('users/{user}/unfollow',  [UserController::class, 'unfollow']);
+    Route::get('users/{user}/followings',  [UserController::class, 'getFollowings']);
 
 
 });

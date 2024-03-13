@@ -12,6 +12,8 @@ use App\Http\Resources\UserCollection;
 use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Response;
+
 class UserController extends Controller
 {
     public function index(Request $request)
@@ -89,5 +91,30 @@ class UserController extends Controller
         ]);
     }
     
-    
+    public function toggleFollow(Request $request, User $user)
+{
+    $authenticatedUser = $request->user(); // Retrieve the authenticated user
+
+    // Check if the authenticated user is already following the given user
+    $isFollowing = $authenticatedUser->followings()->where('followed_id', $user->id)->exists();
+
+    if ($isFollowing) {
+        $authenticatedUser->followings()->detach($user->id);
+        $message = 'You have unfollowed ' . $user->name;
+    } else {
+        $authenticatedUser->followings()->attach($user->id);
+        $message = 'You are now following ' . $user->name;
+    }
+
+    return response()->json(['message' => $message], Response::HTTP_OK);
+}
+
+    public function getFollowings(Request $request)
+    {
+        $user = $request->user(); 
+
+        $followings = $user->followings()->with('recipes.images','recipes.ingredients','recipes.steps','recipes.category','images')->get();
+
+        return response()->json($followings);
+    }
 }
