@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Response;
+use App\Models\Notification;
 
 class UserController extends Controller
 {
@@ -90,24 +91,32 @@ class UserController extends Controller
             
         ]);
     }
-    
     public function toggleFollow(Request $request, User $user)
-{
-    $authenticatedUser = $request->user(); // Retrieve the authenticated user
+    {
+        $authenticatedUser = $request->user(); // Retrieve the authenticated user
 
-    // Check if the authenticated user is already following the given user
-    $isFollowing = $authenticatedUser->followings()->where('followed_id', $user->id)->exists();
+        // Check if the authenticated user is already following the given user
+        $isFollowing = $authenticatedUser->followings()->where('followed_id', $user->id)->exists();
 
-    if ($isFollowing) {
-        $authenticatedUser->followings()->detach($user->id);
-        $message = 'You have unfollowed ' . $user->name;
-    } else {
-        $authenticatedUser->followings()->attach($user->id);
-        $message = 'You are now following ' . $user->name;
+        if ($isFollowing) {
+            $authenticatedUser->followings()->detach($user->id);
+            $message = 'You have unfollowed ' . $user->name;
+        } else {
+            $authenticatedUser->followings()->attach($user->id);
+            $message = 'You are now following ' . $user->name;
+
+            // Create a notification for the followed user
+            $notificationContent = 'User ' . $authenticatedUser->name . ' is now following you.';
+            $notification = new Notification([
+                'source_user_id' => $authenticatedUser->id,
+                'destination_user_id' => $user->id,
+                'content' => $notificationContent,
+            ]);
+            $notification->save();
+        }
+
+        return response()->json(['message' => $message], Response::HTTP_OK);
     }
-
-    return response()->json(['message' => $message], Response::HTTP_OK);
-}
 
     public function getFollowings(Request $request)
     {

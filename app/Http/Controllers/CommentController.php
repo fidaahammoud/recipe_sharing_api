@@ -8,12 +8,13 @@ use App\Models\Comment;
 use App\Http\Resources\CommentResource;
 use App\Http\Requests\StoreCommentRequest;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Notification; 
+
 
 class CommentController extends Controller
 {
     public function store(StoreCommentRequest $request, Recipe $recipe)
     {
-        // Check if the user is authenticated
         if (!Auth::check()) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
@@ -25,7 +26,15 @@ class CommentController extends Controller
 
         $recipe->comments()->save($comment);
         $recipe->load('comments.user.images');
-        //return new CommentResource($comment);
+
+        $notificationContent = 'User ' . Auth::user()->name . ' commented on your recipe "' . $recipe->title . '": ' . $comment->content;
+        $notification = new Notification([
+            'source_user_id' => Auth::id(),
+            'destination_user_id' => $recipe->creator_id,
+            'content' => $notificationContent,
+        ]);
+        $notification->save();
+
         return response()->json(['message' => 'Comment added successfully','data' =>  $recipe]);
     }
 }

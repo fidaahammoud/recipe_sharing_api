@@ -13,6 +13,8 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FavoriteController;
 
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\NotificationController;
+
 
 
 /*
@@ -73,8 +75,10 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::put('updatePersonalInformation/{user}', [UserController::class, 'updatePersonalInformation']);
 
     Route::post('users/{user}/toggleFollow', [UserController::class, 'toggleFollow']);
-    //Route::post('users/{user}/unfollow',  [UserController::class, 'unfollow']);
     Route::get('users/{user}/followings',  [UserController::class, 'getFollowings']);
+
+    Route::get('notifications',  [NotificationController::class, 'getNotifications']);
+
 
 
 });

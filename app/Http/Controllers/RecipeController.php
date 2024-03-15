@@ -19,7 +19,7 @@ use App\Models\Rating;
 
 use Illuminate\Http\Request; 
 use Illuminate\Database\Eloquent\Builder;
-
+use App\Models\Notification;
 class RecipeController extends Controller
 {
 
@@ -176,36 +176,40 @@ class RecipeController extends Controller
     
 }
 
-    public function likeRecipe(Recipe $recipe)
-    {
-        // Ensure the user is authenticated
-        $user = auth()->user();
+public function likeRecipe(Recipe $recipe)
+{
+    $user = auth()->user();
 
-        // Check if the user has already liked the recipe
-        $like = $recipe->likes()->where('user_id', $user->id)->first();
+    // Check if the user has already liked the recipe
+    $like = $recipe->likes()->where('user_id', $user->id)->first();
 
-        if (!$like) {
-            // If not, create a new like
-            $like = new Like(['user_id' => $user->id]);
-            $recipe->likes()->save($like);
+    if (!$like) {
+        // If not, create a new like
+        $like = new Like(['user_id' => $user->id]);
+        $recipe->likes()->save($like);
+        $recipe->increment('totalLikes');
 
-            // Increment the like count in the Recipe model
-            $recipe->increment('totalLikes');
+        // Create a notification for the recipe creator
+        $notificationContent = 'User ' . $user->name . ' liked your recipe "' . $recipe->title . '".';
+        $notification = new Notification([
+            'source_user_id' => $user->id,
+            'destination_user_id' => $recipe->creator_id,
+            'content' => $notificationContent,
+        ]);
+        $notification->save();
 
-            $nbOfLikes = $recipe->totalLikes;
+        $nbOfLikes = $recipe->totalLikes;
 
-            return response()->json(['message' => 'Recipe liked successfully.', 'nbOfLikes' => $nbOfLikes]);
-        } else {
-            // If already liked, unlike it
-            $like->delete();
+        return response()->json(['message' => 'Recipe liked successfully.', 'nbOfLikes' => $nbOfLikes]);
+    } else {
+        // If already liked, unlike it
+        $like->delete();
+        $recipe->decrement('totalLikes');
+        $nbOfLikes = $recipe->totalLikes;
 
-            // Decrement the like count in the Recipe model
-            $recipe->decrement('totalLikes');
-            $nbOfLikes = $recipe->totalLikes;
-
-            return response()->json(['message' => 'Recipe unliked successfully.','nbOfLikes' => $nbOfLikes]);
-        }
+        return response()->json(['message' => 'Recipe unliked successfully.','nbOfLikes' => $nbOfLikes]);
     }
+}
 
     public function rateRecipe(Recipe $recipe, $rating)
     {
