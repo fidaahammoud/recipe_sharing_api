@@ -14,7 +14,7 @@
                 <img src="{{ asset('logo.jpeg') }}" alt="laravel daily" width="200" />
             </td>
             <td class="w-half">
-                <h2>Invoice ID: 834847473</h2>
+            <h2>Report ID: {{ $reportId }}</h2>
             </td>
         </tr>
     </table>
@@ -23,15 +23,10 @@
         <table class="w-full">
             <tr>
                 <td class="w-half">
-                    <div><h4>To:</h4></div>
-                    <div>John Doe</div>
-                    <div>123 Acme Str.</div>
+                    <div><h4>Date:</h4></div>
+                    <div><h5> {{ $createdAt }}</h5></div>
                 </td>
-                <td class="w-half">
-                    <div><h4>From:</h4></div>
-                    <div>Laravel Daily</div>
-                    <div>London</div>
-                </td>
+               
             </tr>
         </table>
     </div>
@@ -39,33 +34,43 @@
     <div class="margin-top">
         <table class="products">
             <tr>
-                <th>Qty</th>
+                <th>RecipeId</th>
+                <th>Title</th>
                 <th>Description</th>
-                <th>Price</th>
+                <th>CategoryName</th>
+                <th>CreatorName</th>
             </tr>
-            <tr class="items">
-                @foreach($data as $item)
+            <tr class="products">
+            @foreach($data as $item)
+                <tr> 
                     <td>
-                        {{ $item['quantity'] }}
+                        {{ $item['recipeId'] }}
                     </td>
                     <td>
                         {{ $item['description'] }}
                     </td>
                     <td>
-                        {{ $item['price'] }}
+                        {{ $item['title'] }}
                     </td>
-                @endforeach
+                    <td>
+                        {{ $item['category'] }}
+                    </td>
+                    <td>
+                        {{ $item['creator'] }}
+                    </td>
+                </tr> 
+            @endforeach
             </tr>
         </table>
     </div>
  
     <div class="total">
-        Total: $129.00 USD
+         Total Recipes : {{ $data->count() }}
     </div>
  
     <div class="footer margin-top">
         <div>Thank you</div>
-        <div>&copy; Laravel Daily</div>
+        <div>&copy; Yumssterr</div>
     </div>
 </body>
 </html>

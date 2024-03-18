@@ -59,21 +59,28 @@ class PdfController extends Controller
         Log::info('My form', [
             'recipes' => $recipes]);
 
+        //arraya
          $data = collect();
         
-        foreach ($recipes as $recipe) {
-            $data->push(['quantity' => $recipe['id'], 'description' => $recipe['description'], 'price' => $recipe['title'],'category' => ['category'], 'creator_id' => ['creator_id']]);
+         foreach ($recipes as $recipe) {
+
+            $recipe->load('category', 'ingredients', 'steps', 'user', 'comments.user.images', 'images');
+
+
+            $data->push([
+                'recipeId' => $recipe->id,
+                'description' => $recipe->description,
+                'title' => $recipe->title,
+                'category' =>$recipe->category->name,
+                'creator' => $recipe->user->name,
+            ]);
         }
 
-        // $data = [
-        //     [
-        //         'quantity' => 1,
-        //         'description' => '1 Year Subscription',
-        //         'price' => '129.00'
-        //     ]
-        // ];
+       
     
-        $pdf = Pdf::loadView('pdf', ['data' => $data]);
+        //$pdf = Pdf::loadView('pdf', ['data' => $data, 'reportId' => $guidRecord->id]);
+        $pdf = Pdf::loadView('pdf', ['data' => $data, 'reportId' => $guidRecord->id, 'createdAt' => $guidRecord->created_at]);
+
         return $pdf->stream('invoice.pdf');
     }
 }

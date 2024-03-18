@@ -23,17 +23,20 @@ table.products {
     font-size: 0.875rem;
 }
 table.products tr {
-    background-color: rgb(96 165 250);
+    background-color: #fff; /* Set background color for table rows */
 }
 table.products th {
-    color: #ffffff;
+    color: #ffffff; /* Text color for table headers */
     padding: 0.5rem;
+    background-color: rgb(96 165 250); /* Set background color for table headers */
 }
-table tr.items {
-    background-color: rgb(241 245 249);
+table.products th.blue-header {
+    background-color: blue; /* Set background color for table headers with the blue-header class */
 }
-table tr.items td {
+table.products tr.items td {
     padding: 0.5rem;
+    text-align: center; /* Center-align the content */
+
 }
 .total {
     text-align: right;
