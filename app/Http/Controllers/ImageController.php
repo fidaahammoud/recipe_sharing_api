@@ -68,6 +68,32 @@ public function recipeImageStore(Request $request, User $user)
     return response()->json($image, Response::HTTP_CREATED);
 }
 
+
+public function updateUserImageStore(Request $request, User $user)
+{
+    // Validate if the provided user matches the authenticated user
+    if (!Auth::user() || Auth::user()->id !== $user->id) {
+        return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+    }
+
+    // Validate the image
+    $this->validate($request, [
+        'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+    ]);
+
+    // Store the image
+    $imagePath = $request->file('image')->store('images', 'public');
+
+    // Create a new Image instance
+    $image = Image::create([
+        'image' => $imagePath,
+    ]);
+
+
+    return response()->json($image, Response::HTTP_CREATED);
+}
+
+
 public function index()
 {
     $images = Image::all();

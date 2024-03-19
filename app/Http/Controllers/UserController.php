@@ -48,49 +48,59 @@ class UserController extends Controller
     }
     
 
-    public function updatePersonalInformation(Request $request, User $user)
-    {
-        // Ensure the user is authenticated
-        if (!Auth::check()) {
-            return response()->json(['error' => 'Unauthenticated'], 401);
-        }
-    
-        // Check if the authenticated user matches the user whose profile is being updated
-        if (Auth::id() !== $user->id) {
-            return response()->json(['error' => 'Unauthorized access'], 403);
-        }
-    
-        $validator = Validator::make($request->all(), [
-            'username' => 'sometimes|string|min:3|unique:users,username,' . $user->id,
-            'name' => 'sometimes|string|max:255|min:3',
-            'bio' => 'sometimes|nullable|string|max:255',
-        ]);
-    
-        if ($validator->fails()) {
-            //return response()->json(['error' => 'Validation failed', 'message' => $validator->errors()], 400);
-            $errors = $validator->errors()->all();
-            return response()->json(['error' => 'Validation failed', 'message' => $errors], 400);
-        }
-    
-        // Determine which attributes to update
-        $attributesToUpdate = [];
-        if ($request->filled('username')) {
-            $attributesToUpdate['username'] = $request->input('username');
-        }
-        if ($request->filled('name')) {
-            $attributesToUpdate['name'] = $request->input('name');
-        }
-        $attributesToUpdate['bio'] = $request->filled('bio') ? $request->input('bio') : null;
-    
-        // Update user's basic information
-        $user->update($attributesToUpdate);
-    
-        return response()->json([
-            'message' => 'Personal information updated successfully',
-            'user' => $user,
-            
-        ]);
+public function updatePersonalInformation(Request $request, User $user)
+{
+    // Ensure the user is authenticated
+    if (!Auth::check()) {
+        return response()->json(['error' => 'Unauthenticated'], 401);
     }
+
+    // Check if the authenticated user matches the user whose profile is being updated
+    if (Auth::id() !== $user->id) {
+        return response()->json(['error' => 'Unauthorized access'], 403);
+    }
+
+    // Validate the request data
+    $validator = Validator::make($request->all(), [
+        'username' => 'sometimes|string|min:3|unique:users,username,' . $user->id,
+        'name' => 'sometimes|string|max:255|min:3',
+        'bio' => 'sometimes|nullable|string|max:255',
+        'image_id' => 'sometimes|integer',
+    ]);
+
+    if ($validator->fails()) {
+        $errors = $validator->errors()->all();
+        return response()->json(['error' => 'Validation failed', 'message' => $errors], 400);
+    }
+
+    // Determine which attributes to update
+    $attributesToUpdate = [];
+    if ($request->filled('username')) {
+        $attributesToUpdate['username'] = $request->input('username');
+    }
+    if ($request->filled('name')) {
+        $attributesToUpdate['name'] = $request->input('name');
+    }
+    if ($request->filled('bio')) {
+        $attributesToUpdate['bio'] = $request->input('bio');
+    }
+    if ($request->filled('image_id')) {
+        $attributesToUpdate['image_id'] = $request->input('image_id');
+    }
+
+    // Update user's information
+    $user->update($attributesToUpdate);
+
+    // Refresh the user to get updated values
+    $user->refresh();
+
+    return response()->json([
+        'message' => 'Personal information updated successfully',
+        'user' => $user
+    ]);
+}
+
+
     public function toggleFollow(Request $request, User $user)
     {
         $authenticatedUser = $request->user(); // Retrieve the authenticated user

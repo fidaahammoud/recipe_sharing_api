@@ -72,13 +72,16 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::post('recipes/{recipe}/addToFavorite', [FavoriteController::class, 'addToFavorites']);
     Route::get('users/{user}/favorites', [FavoriteController::class, 'index']);
-    Route::put('updatePersonalInformation/{user}', [UserController::class, 'updatePersonalInformation']);
 
     Route::post('users/{user}/toggleFollow', [UserController::class, 'toggleFollow']);
     Route::get('users/{user}/followings',  [UserController::class, 'getFollowings']);
 
     Route::get('notifications',  [NotificationController::class, 'getNotifications']);
 
+
+    Route::put('updatePersonalInformation/{user}', [UserController::class, 'updatePersonalInformation']);
+
+    Route::post('image/{user}/image', [ImageController::class, 'updateUserImageStore']);
 
 
 });
