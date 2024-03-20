@@ -112,7 +112,7 @@ class RecipeController extends Controller
             'preparationSteps' => 'sometimes|array',
             'preparationSteps.*' => 'sometimes|string',
             'image_id' => 'sometimes|integer',
-            'comment' => 'sometimes|string',
+            'comment' => 'sometimes|nullable|string',
 
         ]);
     

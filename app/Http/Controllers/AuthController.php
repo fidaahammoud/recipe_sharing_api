@@ -71,6 +71,8 @@ class AuthController extends Controller
             'username' => 'required|string|unique:users,username|max:255|min:3,' . $user->id,
             'name' => 'required|string|max:255|min:3',
             'bio' => 'nullable|string|max:255',
+            'image_id' => 'required|integer',
+
         ]);
     
         if ($validator->fails()) {
@@ -82,6 +84,8 @@ class AuthController extends Controller
             'username' => $request->input('username'),
             'name' => $request->input('name'),
             'bio' => $request->input('bio'),
+            'image_id' => $request->input('image_id'),
+
         ]);
     
         return response()->json([

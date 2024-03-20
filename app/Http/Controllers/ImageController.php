@@ -14,32 +14,32 @@ use App\Models\Recipe;
 
 class ImageController extends Controller
 {
-    public function profileImageStore(Request $request, User $user)
-{
-    // Validate if the provided user matches the authenticated user
-    if (!Auth::user() || Auth::user()->id !== $user->id) {
-        return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
-    }
+//     public function profileImageStore(Request $request, User $user)
+// {
+//     // Validate if the provided user matches the authenticated user
+//     if (!Auth::user() || Auth::user()->id !== $user->id) {
+//         return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+//     }
 
-    // Validate the image
-    $this->validate($request, [
-        'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
-    ]);
+//     // Validate the image
+//     $this->validate($request, [
+//         'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+//     ]);
 
-    // Store the image
-    $imagePath = $request->file('image')->store('images', 'public');
+//     // Store the image
+//     $imagePath = $request->file('image')->store('images', 'public');
 
-    // Create a new Image instance
-    $image = Image::create([
-        'image' => $imagePath,
-    ]);
+//     // Create a new Image instance
+//     $image = Image::create([
+//         'image' => $imagePath,
+//     ]);
 
-    // Associate the image with the user using the image_id column
-    $user->image_id = $image->id;
-    $user->save();
+//     // Associate the image with the user using the image_id column
+//     $user->image_id = $image->id;
+//     $user->save();
 
-    return response()->json($image, Response::HTTP_CREATED);
-}
+//     return response()->json($image, Response::HTTP_CREATED);
+// }
 
 public function recipeImageStore(Request $request, User $user)
 {
@@ -69,7 +69,7 @@ public function recipeImageStore(Request $request, User $user)
 }
 
 
-public function updateUserImageStore(Request $request, User $user)
+public function profileImageStore(Request $request, User $user)
 {
     // Validate if the provided user matches the authenticated user
     if (!Auth::user() || Auth::user()->id !== $user->id) {

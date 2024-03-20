@@ -81,7 +81,7 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::put('updatePersonalInformation/{user}', [UserController::class, 'updatePersonalInformation']);
 
-    Route::post('image/{user}/image', [ImageController::class, 'updateUserImageStore']);
+    Route::post('image/{user}/image', [ImageController::class, 'profileImageStore']);
 
 
 });
