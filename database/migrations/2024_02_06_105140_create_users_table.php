@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('username')->unique()->nullable();
             $table->string('bio')->nullable();
             $table->foreignId('image_id')->nullable()->constrained('images')->cascadeOnDelete();
+            $table->unsignedInteger('totalFollowers')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

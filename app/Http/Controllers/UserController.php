@@ -110,9 +110,11 @@ public function updatePersonalInformation(Request $request, User $user)
 
         if ($isFollowing) {
             $authenticatedUser->followings()->detach($user->id);
+            $user->decrement('totalFollowers'); // Decrement totalFollowers when unfollowed
             $message = 'You have unfollowed ' . $user->name;
         } else {
             $authenticatedUser->followings()->attach($user->id);
+            $user->increment('totalFollowers'); // Increment totalFollowers when followed
             $message = 'You are now following ' . $user->name;
 
             // Create a notification for the followed user
