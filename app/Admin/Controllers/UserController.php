@@ -33,8 +33,8 @@ class UserController extends AdminController
         $grid->column('password', __('Password'));
         $grid->column('username', __('Username'));
         $grid->column('bio', __('Bio'));
-        //$grid->column('image_id', __('Image id'));
-        $grid->column('image.image', __('Image')); 
+        $grid->column('image_id', __('Image id'));
+      //  $grid->column('image.image', __('Image')); 
        // $grid->column('remember_token', __('Remember token'));
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
