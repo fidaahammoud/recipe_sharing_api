@@ -31,28 +31,30 @@ class RapportController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Rapport());
-
+    
         $grid->column('id', __('Id'));
         $grid->column('creator_id', __('Creator id'));
         $grid->column('category_id', __('Category id'));
         $grid->column('startDate', __('StartDate'));
         $grid->column('endDate', __('EndDate'));
-        $grid->column('guid', __('Guid'));
-        $grid->column('url', __('Url'));
+        //$grid->column('guid', __('Guid'));
+        $grid->column('url', __('Url'))->display(function ($url) {
+            return "<a href='{$url}' class='btn btn-primary' target='_blank'>View</a>";
+        });
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
-
-
-        
+    
+        $grid->disableActions(); // Disables actions (Edit, Delete) for the grid
+    
         $grid->filter(function($filter) {
             $filter->equal('category_id', 'Category')->select(Category::pluck('name', 'id'));
         });
-
+    
         // Filter by creator id
         $grid->filter(function($filter) {
             $filter->equal('creator_id', 'User')->select(User::pluck('name', 'id'));
         });
-
+    
         return $grid;
     }
 
