@@ -26,10 +26,10 @@ class RecipeController extends Controller
     public function index(Request $request)
     {
         $recipes = QueryBuilder::for(Recipe::class)
-        ->allowedFilters(['category.name'])
+        ->allowedFilters(['category.name','dietary.name'])
         ->defaultSort('-created_at')
         ->allowedSorts(['preparationTime', 'created_at','totalLikes','avrgRating'])
-        ->with('ingredients','user.images', 'steps','comments.user.images','images','category')
+        ->with('ingredients','user.images', 'steps','comments.user.images','images','category','dietary')
         ->paginate();
 
         $recipes->setPath('http://192.168.56.10:80/laravel/api/recipes');
@@ -53,6 +53,7 @@ class RecipeController extends Controller
             'description' => $validatedData['description'],
             'comment' => $validatedData['comment'],
             'category_id' =>  $validatedData['category_id'],
+            'dietary_id' =>  $validatedData['dietary_id'],
             'preparationTime' => $validatedData['preparationTime'],
             'image_id' => $validatedData['image_id'],
             
@@ -82,14 +83,14 @@ class RecipeController extends Controller
         }
     
         // Eager load the relationships
-        $recipe->load('category', 'ingredients', 'steps', 'user','comments.user.images','images');
+        $recipe->load('category','dietary', 'ingredients', 'steps', 'user','comments.user.images','images');
         return $recipe;
     }
     
 
     public function show(Request $request, Recipe $recipe)
     {
-        $recipe->load('user.images','ingredients', 'steps','comments.user.images','images','category');
+        $recipe->load('user.images','ingredients', 'steps','comments.user.images','images','category','dietary');
         return $recipe;
     }
 
@@ -106,6 +107,7 @@ class RecipeController extends Controller
             'description' => 'sometimes|string',
             'preparationTime' => 'sometimes|integer',
             'category_id' => 'sometimes|integer',
+            'dietary_id' => 'sometimes|integer',
             'ingredients' => 'sometimes|array',
             'ingredients.*.ingredientName' => 'sometimes|string',
             'ingredients.*.measurementUnit' => 'sometimes|string',
@@ -138,7 +140,7 @@ class RecipeController extends Controller
         }
     
         // Eager load the relationships
-        $recipe->load('category', 'ingredients', 'steps', 'user', 'comments.user.images');
+        $recipe->load('category','dietary', 'ingredients', 'steps', 'user', 'comments.user.images');
     
         return $recipe;
     }
@@ -167,7 +169,7 @@ class RecipeController extends Controller
     public function userRecipes(User $user)
 {
     $recipes = $user->recipes;
-    $recipes->load('ingredients','user.images', 'steps','comments.user.images','images','category'); 
+    $recipes->load('ingredients','user.images', 'steps','comments.user.images','images','category','dietary'); 
 
     return  [
         'data' => $recipes 
@@ -266,6 +268,9 @@ public function likeRecipe(Recipe $recipe)
                          ->orWhereHas('category', function ($query) use ($searchQuery) {
                              $query->where('name', 'like', "%$searchQuery%");
                          })
+                         ->orWhereHas('dietary', function ($query) use ($searchQuery) {
+                            $query->where('name', 'like', "%$searchQuery%");
+                        })
                          ->get();
         $results->load('ingredients','user.images', 'steps','comments.user.images','images','category');
         

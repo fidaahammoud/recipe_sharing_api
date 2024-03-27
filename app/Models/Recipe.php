@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Category;
+use App\Models\Dietary;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Image;
@@ -20,13 +21,19 @@ class Recipe extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'category_id', 'description', 'preparationTime', 'comment','totalLikes','avrgRating','image_id'
+        'title', 'category_id', 'dietary_id','description', 'preparationTime', 'comment','totalLikes','avrgRating','image_id'
     ];
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
+
+    public function dietary(): BelongsTo
+    {
+        return $this->belongsTo(Dietary::class, 'dietary_id');
+    }
+    
 
     public function steps(): HasMany
     {

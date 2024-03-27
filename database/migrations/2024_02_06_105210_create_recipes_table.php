@@ -17,6 +17,7 @@ return new class extends Migration
                 $table->foreignId('creator_id')->constrained('users')->cascadeOnDelete();
                 $table->string('title');
                 $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
+                $table->foreignId('dietary_id')->constrained('dietary')->cascadeOnDelete();
                 $table->text('description');
                 $table->foreignId('image_id')->nullable()->constrained('images')->cascadeOnDelete();
                 $table->integer('preparationTime');

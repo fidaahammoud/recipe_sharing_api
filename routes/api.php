@@ -15,6 +15,8 @@ use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\NotificationController;
 
+use App\Http\Controllers\DietaryController;
+
 
 
 /*
@@ -40,6 +42,10 @@ Route::post('register', [AuthController::class, 'register']);
 
 Route::get('categories', [CategoryController::class, 'index']);
 Route::get('categories/{category}', [CategoryController::class, 'show']);
+
+Route::get('dietaries', [DietaryController::class, 'index']);
+Route::get('dietaries/{dietary}', [DietaryController::class, 'show']);
+
 
 Route::get('users', [UserController::class, 'index']);
 Route::get('users/{user}', [UserController::class, 'show']);
