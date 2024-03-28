@@ -110,11 +110,11 @@ public function updatePersonalInformation(Request $request, User $user)
 
         if ($isFollowing) {
             $authenticatedUser->followings()->detach($user->id);
-            $user->decrement('totalFollowers'); // Decrement totalFollowers when unfollowed
+            $user->decrement('totalFollowers'); 
             $message = 'You have unfollowed ' . $user->name;
         } else {
             $authenticatedUser->followings()->attach($user->id);
-            $user->increment('totalFollowers'); // Increment totalFollowers when followed
+            $user->increment('totalFollowers'); 
             $message = 'You are now following ' . $user->name;
 
             // Create a notification for the followed user
@@ -127,7 +127,16 @@ public function updatePersonalInformation(Request $request, User $user)
             $notification->save();
         }
 
-        return response()->json(['message' => $message], Response::HTTP_OK);
+       // return response()->json(['message' => $message, $user->load('images')], Response::HTTP_OK);
+
+        // Create the custom response array
+    $responseData = [
+        'message' => $message,
+        'user' => $user->load('images') // Load the user's images
+    ];
+
+    // Return the custom response
+    return response()->json($responseData, Response::HTTP_OK);
     }
 
     public function getFollowings(Request $request)

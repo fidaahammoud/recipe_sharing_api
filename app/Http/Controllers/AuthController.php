@@ -15,7 +15,7 @@ class AuthController extends Controller
 
     public function __construct()
 {
-    $this->middleware('auth', ['only' => ['logout', 'completeProfile']]);
+    $this->middleware('auth', ['only' => ['completeProfile']]);
 }
 
     public function login(Request $request){
@@ -98,7 +98,7 @@ class AuthController extends Controller
 
 
 
-    public function logout(Request $request)
+    public function logout(Request $request,User $user)
     {
         $request->user()->tokens()->delete();
 

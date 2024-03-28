@@ -168,13 +168,15 @@ class RecipeController extends Controller
 
     public function userRecipes(User $user)
 {
-    $recipes = $user->recipes;
+    $recipes = $user->recipes()->orderBy('created_at', 'desc')->get();
     $recipes->load('ingredients','user.images', 'steps','comments.user.images','images','category','dietary'); 
 
     return  [
         'data' => $recipes 
     ];
 
+
+    
     
 }
 

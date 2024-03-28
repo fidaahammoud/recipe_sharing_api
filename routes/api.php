@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
+
 Route::get('categories', [CategoryController::class, 'index']);
 Route::get('categories/{category}', [CategoryController::class, 'show']);
 
@@ -89,5 +90,7 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::post('image/{user}/image', [ImageController::class, 'profileImageStore']);
 
+
+    Route::post('logout', [AuthController::class, 'logout']);
 
 });
