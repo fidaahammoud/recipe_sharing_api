@@ -61,6 +61,9 @@ Route::get('recipes/{recipe}', [RecipeController::class, 'show']);
 Route::get('images', [ImageController::class, 'index']);
 Route::get('images/{id}', [ImageController::class, 'show']);
 
+
+
+
 Route::middleware('auth:sanctum')->group(function (){
     Route::post('recipes', [RecipeController::class, 'store']);
     Route::put('recipes/{recipe}', [RecipeController::class, 'update']);
@@ -72,9 +75,7 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('recipes/{recipe}/rate/{rating}', [RecipeController::class, 'rateRecipe']);
 
 
-    Route::post('image/{user}',[ImageController::class, 'profileImageStore']);
     Route::put('completeProfile/{user}', [AuthController::class, 'completeProfile']);
-    Route::post('image/{user}/recipe', [ImageController::class, 'recipeImageStore']);
 
 
     Route::post('recipes/{recipe}/addToFavorite', [FavoriteController::class, 'addToFavorites']);
@@ -88,8 +89,9 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::put('updatePersonalInformation/{user}', [UserController::class, 'updatePersonalInformation']);
 
-    Route::post('image/{user}/image', [ImageController::class, 'profileImageStore']);
+    Route::post('image/{user}', [ImageController::class, 'uploadImageMobile']);
 
+    Route::post('uploadImageWeb/{user}', [ImageController::class, "uploadImageWeb"]);
 
     Route::post('logout', [AuthController::class, 'logout']);
 

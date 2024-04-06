@@ -7,6 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Image;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+//use Illuminate\Support\Facades\Response;
+
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Illuminate\Support\Facades\Response as LaravelResponse;
+
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\Recipe;
@@ -14,77 +19,23 @@ use App\Models\Recipe;
 
 class ImageController extends Controller
 {
-//     public function profileImageStore(Request $request, User $user)
-// {
-//     // Validate if the provided user matches the authenticated user
-//     if (!Auth::user() || Auth::user()->id !== $user->id) {
-//         return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
-//     }
 
-//     // Validate the image
-//     $this->validate($request, [
-//         'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
-//     ]);
+    use ApiResponse;
 
-//     // Store the image
-//     $imagePath = $request->file('image')->store('images', 'public');
-
-//     // Create a new Image instance
-//     $image = Image::create([
-//         'image' => $imagePath,
-//     ]);
-
-//     // Associate the image with the user using the image_id column
-//     $user->image_id = $image->id;
-//     $user->save();
-
-//     return response()->json($image, Response::HTTP_CREATED);
-// }
-
-public function recipeImageStore(Request $request, User $user)
+public function uploadImageMobile(Request $request, User $user)
 {
-    // Validate if the provided user matches the authenticated user
+    
     if (!Auth::user() || Auth::user()->id !== $user->id) {
         return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
     }
 
-    // Validate the image
     $this->validate($request, [
         'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
     ]);
+    Log::info(time().'.'.$request->image);
 
-    // Store the image
     $imagePath = $request->file('image')->store('images', 'public');
 
-    // Create a new Image instance
-    $image = Image::create([
-        'image' => $imagePath,
-    ]);
-
-     //Associate the image with the recipe using the image_id column
-    //$recipe->image_id = $image->id;
-    //$recipe->save();
-
-    return response()->json($image, Response::HTTP_CREATED);
-}
-
-
-public function profileImageStore(Request $request, User $user)
-{
-    // Validate if the provided user matches the authenticated user
-    if (!Auth::user() || Auth::user()->id !== $user->id) {
-        return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
-    }
-
-    // Validate the image
-    $this->validate($request, [
-        'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
-    ]);
-
-    // Store the image
-    $imagePath = $request->file('image')->store('images', 'public');
-
-    // Create a new Image instance
     $image = Image::create([
         'image' => $imagePath,
     ]);
@@ -112,4 +63,45 @@ public function show($id)
 
     return response()->json(['data' => $image], Response::HTTP_OK);
 }
+
+// public function uploadImageWeb(Request $request,  User $user) {
+//     if($request->hasFile("image")) {
+//         $image = $request->file("image");
+//         $imageName = time() . ".". $image->getClientOriginalExtension();
+//         $image->move(public_path("/storage/images"), $imageName);
+
+//         $image = Image::create([
+//             'image' => $imageName,
+//         ]);
+
+//         return response()->json($this->apiResponse($imageName, "created", 200));
+//     }
+//     return response()->json($this->apiResponse(null,"",404));
+// }
+
+public function uploadImageWeb(Request $request,  User $user) {
+    if ($request->hasFile("image")) {
+        $image = $request->file("image");
+        $imageName = time() . "." . $image->getClientOriginalExtension();
+        
+        $imagePath = "images/" . $imageName;
+        
+        $image->move(public_path("/storage/images"), $imageName);
+
+        $imageModel = Image::create([
+            'image' => $imagePath, 
+        ]);
+
+        return response()->json([
+            'image_id' => $imageModel->id, 
+            'image_name' => $imagePath,
+            'status' => 'created',
+        ], 200);
+    }
+
+    return response()->json([
+        'error' => 'No image provided',
+    ], 404);
+}
+
 }
