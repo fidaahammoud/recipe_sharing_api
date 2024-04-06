@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Image;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-//use Illuminate\Support\Facades\Response;
 
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Illuminate\Support\Facades\Response as LaravelResponse;
@@ -64,22 +63,18 @@ public function show($id)
     return response()->json(['data' => $image], Response::HTTP_OK);
 }
 
-// public function uploadImageWeb(Request $request,  User $user) {
-//     if($request->hasFile("image")) {
-//         $image = $request->file("image");
-//         $imageName = time() . ".". $image->getClientOriginalExtension();
-//         $image->move(public_path("/storage/images"), $imageName);
-
-//         $image = Image::create([
-//             'image' => $imageName,
-//         ]);
-
-//         return response()->json($this->apiResponse($imageName, "created", 200));
-//     }
-//     return response()->json($this->apiResponse(null,"",404));
-// }
 
 public function uploadImageWeb(Request $request,  User $user) {
+
+     
+    if (!Auth::user() || Auth::user()->id !== $user->id) {
+        return response()->json(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+    }
+
+    $this->validate($request, [
+        'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+    ]);
+
     if ($request->hasFile("image")) {
         $image = $request->file("image");
         $imageName = time() . "." . $image->getClientOriginalExtension();
