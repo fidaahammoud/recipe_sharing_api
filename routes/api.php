@@ -56,7 +56,6 @@ Route::get('users/{user}/recipes', [RecipeController::class, 'userRecipes']);
 Route::post('recipes/search', [RecipeController::class, 'search']);
 
 Route::get('recipes', [RecipeController::class, 'index']);
-Route::get('recipes/{recipe}', [RecipeController::class, 'show']);
 
 Route::get('images', [ImageController::class, 'index']);
 Route::get('images/{id}', [ImageController::class, 'show']);
@@ -78,7 +77,7 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::put('completeProfile/{user}', [AuthController::class, 'completeProfile']);
 
 
-    Route::post('recipes/{recipe}/addToFavorite', [FavoriteController::class, 'addToFavorites']);
+    Route::post('{user}/{recipe}/updateStatusFavorite', [FavoriteController::class, 'updateStatusFavorite']);
     Route::get('users/{user}/favorites', [FavoriteController::class, 'index']);
 
     Route::post('users/{user}/toggleFollow', [UserController::class, 'toggleFollow']);
@@ -94,5 +93,7 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('uploadImageWeb/{user}', [ImageController::class, "uploadImageWeb"]);
 
     Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::get('{user}/recipes/{recipe}', [RecipeController::class, 'show']);
 
 });

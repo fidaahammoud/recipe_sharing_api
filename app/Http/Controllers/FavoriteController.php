@@ -12,52 +12,64 @@ use App\Http\Resources\RecipeResource;
 
 class FavoriteController extends Controller
 {
-    public function addToFavorites(Recipe $recipe)
-    {
-        // Ensure the user is authenticated
-        if (!Auth::check()) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
-        }
-    
-        // Retrieve the authenticated user
-        $user = auth()->user();
-    
-        try {
-            // Check if the recipe is already in the user's favorites
-            if ($user->favorites()->where('recipe_id', $recipe->id)->exists()) {
-                // Recipe is already in favorites, so remove it
-                $user->favorites()->detach($recipe->id);
+   public function updateStatusFavorite(User $user , Recipe $recipe)
+{
+    // Ensure the user is authenticated
+    if (!Auth::check()) {
+        return response()->json(['message' => 'Unauthenticated'], 401);
+    }
+
+    try {
+        // Check if record already exists
+        $favorite = Favorite::where('user_id', $user->id)
+                        ->where('recipe_id', $recipe->id)
+                        ->first(); 
+        Log::Info($favorite);
+
+        if ($favorite) {
+            // Check if the isFavorite attribute is true
+            if ($favorite->isFavorite) { 
+                // isFavorite should become false
+                $favorite->update(['isFavorite' => false]);
                 return response()->json(['message' => 'Recipe removed from favorites.']);
             } else {
-                // Recipe is not in favorites, so add it
-                $user->favorites()->attach($recipe->id);
+                // isFavorite is false, it should become true 
+                $favorite->update(['isFavorite' => true]);
                 return response()->json(['message' => 'Recipe added to favorites.']);
             }
-        } catch (\Exception $e) {
-            // Handle any exceptions or errors
-            return response()->json(['message' => 'Error occurred while updating favorites.'], 500);
+            $favorite->save();
+        } else {
+            // If it does not exist, it will be added
+            $user->favorites()->attach($recipe->id);
+            return response()->json(['message' => 'Recipe added to favorites.']);
         }
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Error occurred while updating favorites.'], 500);
     }
+}
 
 
-    public function index(Request $request, User $user)
-    {
-        if ($request->user()->id !== $user->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-    
-        try {
-            $favorites = $user->favorites()->with('ingredients','user.images', 'steps','comments.user.images','images')->get();
-    
-            if ($favorites->isEmpty()) {
-                return response()->json(['message' => 'No favorite recipes found.','data' => $favorites]);
-            }
-    
-            return response()->json(['data' => $favorites]);
-        } catch (\Exception $e) {
-            // Handle any exceptions or errors
-            return response()->json(['message' => 'Error occurred while fetching favorite recipes.'], 500);
-        }
+
+public function index(Request $request, User $user)
+{
+    if ($request->user()->id !== $user->id) {
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
+
+    try {
+        // Retrieve favorite recipes where isFavorite is true
+        $favorites = $user->favorites()->where('isFavorite', true)
+                        ->with('ingredients','user.images', 'steps','comments.user.images','images')
+                        ->get();
+
+        if ($favorites->isEmpty()) {
+            return response()->json(['message' => 'No favorite recipes found.','data' => $favorites]);
+        }
+
+        return response()->json(['data' => $favorites]);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Error occurred while fetching favorite recipes.'], 500);
+    }
+}
 
 }

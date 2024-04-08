@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Like;
 use App\Models\Rating;
+use App\Models\Favorite;
 
 use Illuminate\Http\Request; 
 use Illuminate\Database\Eloquent\Builder;
@@ -88,9 +89,27 @@ class RecipeController extends Controller
     }
     
 
-    public function show(Request $request, Recipe $recipe)
+    public function show(Request $request, User $user , Recipe $recipe)
     {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+    
+        // Check if the authenticated user matches the user specified in the route parameter
+        if ($request->user()->id !== $user->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        
         $recipe->load('user.images','ingredients', 'steps','comments.user.images','images','category','dietary');
+        $favorite = Favorite::where('user_id', $user->id)->where('recipe_id', $recipe->id)->first();
+
+        // Determine if the recipe is favorited by the user
+        $isFavorite = $favorite ? $favorite->isFavorite : false;
+
+        // Include isFavorite attribute in the recipe data
+        $recipe->isFavorite = $isFavorite;
+
+        // Return the recipe data with the isFavorite attribute
         return $recipe;
     }
 
