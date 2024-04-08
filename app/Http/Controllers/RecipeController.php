@@ -95,21 +95,20 @@ class RecipeController extends Controller
             return response()->json(['message' => 'Unauthenticated'], 401);
         }
     
-        // Check if the authenticated user matches the user specified in the route parameter
         if ($request->user()->id !== $user->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
         
         $recipe->load('user.images','ingredients', 'steps','comments.user.images','images','category','dietary');
+        
         $favorite = Favorite::where('user_id', $user->id)->where('recipe_id', $recipe->id)->first();
-
-        // Determine if the recipe is favorited by the user
         $isFavorite = $favorite ? $favorite->isFavorite : false;
-
-        // Include isFavorite attribute in the recipe data
         $recipe->isFavorite = $isFavorite;
 
-        // Return the recipe data with the isFavorite attribute
+        $like = Like::where('user_id', $user->id)->where('recipe_id', $recipe->id)->first();
+        $isLiked = $like ? $like->isLiked : false;
+        $recipe->isLiked = $isLiked;
+
         return $recipe;
     }
 
@@ -194,44 +193,6 @@ class RecipeController extends Controller
         'data' => $recipes 
     ];
 
-
-    
-    
-}
-
-public function likeRecipe(Recipe $recipe)
-{
-    $user = auth()->user();
-
-    // Check if the user has already liked the recipe
-    $like = $recipe->likes()->where('user_id', $user->id)->first();
-
-    if (!$like) {
-        // If not, create a new like
-        $like = new Like(['user_id' => $user->id]);
-        $recipe->likes()->save($like);
-        $recipe->increment('totalLikes');
-
-        // Create a notification for the recipe creator
-        $notificationContent = 'User ' . $user->name . ' liked your recipe "' . $recipe->title . '".';
-        $notification = new Notification([
-            'source_user_id' => $user->id,
-            'destination_user_id' => $recipe->creator_id,
-            'content' => $notificationContent,
-        ]);
-        $notification->save();
-
-        $nbOfLikes = $recipe->totalLikes;
-
-        return response()->json(['message' => 'Recipe liked successfully.', 'nbOfLikes' => $nbOfLikes]);
-    } else {
-        // If already liked, unlike it
-        $like->delete();
-        $recipe->decrement('totalLikes');
-        $nbOfLikes = $recipe->totalLikes;
-
-        return response()->json(['message' => 'Recipe unliked successfully.','nbOfLikes' => $nbOfLikes]);
-    }
 }
 
     public function rateRecipe(Recipe $recipe, $rating)

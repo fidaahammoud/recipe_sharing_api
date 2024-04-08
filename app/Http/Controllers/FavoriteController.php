@@ -12,11 +12,15 @@ use App\Http\Resources\RecipeResource;
 
 class FavoriteController extends Controller
 {
-   public function updateStatusFavorite(User $user , Recipe $recipe)
+   public function updateStatusFavorite(Request $request, User $user , Recipe $recipe)
 {
-    // Ensure the user is authenticated
+    
     if (!Auth::check()) {
         return response()->json(['message' => 'Unauthenticated'], 401);
+    }
+
+    if ($request->user()->id !== $user->id) {
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
 
     try {
@@ -52,6 +56,10 @@ class FavoriteController extends Controller
 
 public function index(Request $request, User $user)
 {
+    if (!Auth::check()) {
+        return response()->json(['message' => 'Unauthenticated'], 401);
+    }
+
     if ($request->user()->id !== $user->id) {
         return response()->json(['message' => 'Unauthorized'], 403);
     }

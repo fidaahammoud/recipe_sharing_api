@@ -60,9 +60,14 @@ class Recipe extends Model
         return $this->belongsTo(Image::class, 'image_id');
     }
 
-    public function likes(): HasMany
+    // public function likes(): HasMany
+    // {
+    //     return $this->hasMany(Like::class);
+    // }
+
+    public function likes(): BelongsToMany
     {
-        return $this->hasMany(Like::class);
+        return $this->belongsToMany(Like::class)->withTimestamps();
     }
 
     public function ratings(): HasMany

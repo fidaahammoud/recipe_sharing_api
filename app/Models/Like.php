@@ -11,7 +11,7 @@ class Like extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'recipe_id'];
+    protected $fillable = ['user_id', 'recipe_id','isLiked'];
 
     public function user(): BelongsTo
     {
