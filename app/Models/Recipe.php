@@ -70,10 +70,15 @@ class Recipe extends Model
         return $this->belongsToMany(Like::class)->withTimestamps();
     }
 
-    public function ratings(): HasMany
+    public function ratings(): BelongsToMany
     {
-        return $this->hasMany(Rating::class);
+        return $this->belongsToMany(Rating::class)->withTimestamps();
     }
+
+    // public function ratings(): HasMany
+    // {
+    //     return $this->hasMany(Rating::class);
+    // }
    
     public function favoritedBy(): BelongsToMany
     {

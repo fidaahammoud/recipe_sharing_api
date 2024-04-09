@@ -12,7 +12,7 @@ class Rating extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'recipe_id', 'rating'];
+    protected $fillable = ['user_id', 'recipe_id', 'rating','isRated'];
 
     public function user(): BelongsTo
     {
@@ -23,4 +23,5 @@ class Rating extends Model
     {
         return $this->belongsTo(Recipe::class);
     }
+    
 }

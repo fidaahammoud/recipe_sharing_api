@@ -17,6 +17,7 @@ use App\Http\Controllers\NotificationController;
 
 use App\Http\Controllers\DietaryController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\RateController;
 
 
 
@@ -73,11 +74,10 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('recipes/{recipe}/comments', [CommentController::class, 'store']);
   
     Route::put('{user}/{recipe}/updateStatusLike', [LikeController::class, 'updateStatusLike']);
-    Route::post('recipes/{recipe}/rate/{rating}', [RecipeController::class, 'rateRecipe']);
 
 
     Route::put('completeProfile/{user}', [AuthController::class, 'completeProfile']);
-
+    Route::put('{user}/{recipe}/{rate}/updateStatusRate', [RateController::class, 'updateStatusRate']);
 
     Route::put('{user}/{recipe}/updateStatusFavorite', [FavoriteController::class, 'updateStatusFavorite']);
     Route::get('users/{user}/favorites', [FavoriteController::class, 'index']);

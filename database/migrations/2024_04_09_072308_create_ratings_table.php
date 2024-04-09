@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('recipe_id')->constrained()->cascadeOnDelete();
             $table->unsignedInteger('rating');
+            $table->boolean('isRated')->default(true);
             $table->timestamps();
         });
     }

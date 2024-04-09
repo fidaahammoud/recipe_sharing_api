@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use App\Models\Recipe;
 use App\Models\User;
 use App\Models\Like;
+use App\Models\Rating;
 
 
 class User extends Authenticatable
@@ -77,6 +78,10 @@ class User extends Authenticatable
         return $this->belongsToMany(Like::class, 'like')->withTimestamps();
     }
 
+    public function ratings(): BelongsToMany
+    {
+        return $this->belongsToMany(Rating::class, 'rate')->withTimestamps();
+    }
 
     public function followers()
     {
