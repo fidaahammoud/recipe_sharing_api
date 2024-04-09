@@ -86,6 +86,7 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::get('users/{user}/followings',  [UserController::class, 'getFollowings']);
 
     Route::get('notifications',  [NotificationController::class, 'getNotifications']);
+    Route::put('updateStatusNotification/{user}/{notification}',  [NotificationController::class, 'updateStatusNotification']);
 
 
     Route::put('updatePersonalInformation/{user}', [UserController::class, 'updatePersonalInformation']);

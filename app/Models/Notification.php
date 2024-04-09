@@ -14,6 +14,7 @@ class Notification extends Model
         'source_user_id',
         'destination_user_id',
         'content',
+        'isRead',
     ];
 
     public function sourceUser()

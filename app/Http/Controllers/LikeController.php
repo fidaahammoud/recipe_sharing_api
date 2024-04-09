@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Models\Favorite;
 use App\Http\Resources\RecipeResource;
+use Illuminate\Database\Eloquent\Builder;
+use App\Models\Notification;
+
 
 class LikeController extends Controller
 {
@@ -38,6 +41,16 @@ class LikeController extends Controller
                     $like->update(['isLiked' => true]);
                     $recipe->increment('totalLikes');
                     $nbOfLikes = $recipe->totalLikes;
+
+                    $notificationContent = 'User ' . $user->name . ' liked your recipe "' . $recipe->title . '".';
+                    $notification = new Notification([
+                        'source_user_id' => $user->id,
+                        'destination_user_id' => $recipe->creator_id,
+                        'content' => $notificationContent,
+                    ]);
+                    $notification->save();
+
+
                     return response()->json(['message' => 'Recipe liked successfully.','nbOfLikes' => $nbOfLikes]);
                 }
                 $like->save();
@@ -51,6 +64,16 @@ class LikeController extends Controller
                 $like->save();
                 $recipe->increment('totalLikes');
                 $nbOfLikes = $recipe->totalLikes;
+
+                $notificationContent = 'User ' . $user->name . ' liked your recipe "' . $recipe->title . '".';
+                    $notification = new Notification([
+                        'source_user_id' => $user->id,
+                        'destination_user_id' => $recipe->creator_id,
+                        'content' => $notificationContent,
+                    ]);
+                    $notification->save();
+
+
                 return response()->json(['message' => 'Recipe liked successfully.','nbOfLikes' => $nbOfLikes]);
             }
         } catch (\Exception $e) {

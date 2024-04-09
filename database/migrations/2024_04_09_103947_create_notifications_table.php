@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('source_user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('destination_user_id')->constrained('users')->cascadeOnDelete();
             $table->text('content');
+            $table->boolean('isRead')->default(false);
             $table->timestamps();
         });
     }
