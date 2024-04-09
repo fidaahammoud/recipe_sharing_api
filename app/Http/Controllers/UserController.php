@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Response;
 use App\Models\Notification;
+use App\Models\Follow;
+
 
 class UserController extends Controller
 {
@@ -37,14 +39,27 @@ class UserController extends Controller
     }
 
     
-    public function show(Request $request, User $user)
+    public function show(Request $request,  $user_id , $user_b_id)
     {
-        if ($request->user()) {
-            $authenticatedUserId = $request->user()->id;
+        $user = User::findOrFail($user_id);
+        $user_b = User::findOrFail($user_b_id);
+
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+    
+        if ($request->user()->id !== $user->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $user->load('images');
-        return  $user;
+        $user_b->load('images');
+
+        $follow = Follow::where('follower_id', $user->id)->where('followed_id', $user_b->id)->first();
+        $isFollowed = $follow ? $follow->isFollowed : false;
+        $user_b->isFollowed = $isFollowed;
+       
+
+        return  $user_b;
     }
     
 
@@ -101,50 +116,50 @@ public function updatePersonalInformation(Request $request, User $user)
 }
 
 
-    public function toggleFollow(Request $request, User $user)
-    {
-        $authenticatedUser = $request->user(); // Retrieve the authenticated user
+    // public function toggleFollow(Request $request, User $user)
+    // {
+    //     $authenticatedUser = $request->user(); // Retrieve the authenticated user
 
-        // Check if the authenticated user is already following the given user
-        $isFollowing = $authenticatedUser->followings()->where('followed_id', $user->id)->exists();
+    //     // Check if the authenticated user is already following the given user
+    //     $isFollowing = $authenticatedUser->followings()->where('followed_id', $user->id)->exists();
 
-        if ($isFollowing) {
-            $authenticatedUser->followings()->detach($user->id);
-            $user->decrement('totalFollowers'); 
-            $message = 'You have unfollowed ' . $user->name;
-        } else {
-            $authenticatedUser->followings()->attach($user->id);
-            $user->increment('totalFollowers'); 
-            $message = 'You are now following ' . $user->name;
+    //     if ($isFollowing) {
+    //         $authenticatedUser->followings()->detach($user->id);
+    //         $user->decrement('totalFollowers'); 
+    //         $message = 'You have unfollowed ' . $user->name;
+    //     } else {
+    //         $authenticatedUser->followings()->attach($user->id);
+    //         $user->increment('totalFollowers'); 
+    //         $message = 'You are now following ' . $user->name;
 
-            // Create a notification for the followed user
-            $notificationContent = 'User ' . $authenticatedUser->name . ' is now following you.';
-            $notification = new Notification([
-                'source_user_id' => $authenticatedUser->id,
-                'destination_user_id' => $user->id,
-                'content' => $notificationContent,
-            ]);
-            $notification->save();
-        }
+    //         // Create a notification for the followed user
+    //         $notificationContent = 'User ' . $authenticatedUser->name . ' is now following you.';
+    //         $notification = new Notification([
+    //             'source_user_id' => $authenticatedUser->id,
+    //             'destination_user_id' => $user->id,
+    //             'content' => $notificationContent,
+    //         ]);
+    //         $notification->save();
+    //     }
 
-       // return response()->json(['message' => $message, $user->load('images')], Response::HTTP_OK);
+    //    // return response()->json(['message' => $message, $user->load('images')], Response::HTTP_OK);
 
-        // Create the custom response array
-    $responseData = [
-        'message' => $message,
-        'user' => $user->load('images') // Load the user's images
-    ];
+    //     // Create the custom response array
+    // $responseData = [
+    //     'message' => $message,
+    //     'user' => $user->load('images') // Load the user's images
+    // ];
 
-    // Return the custom response
-    return response()->json($responseData, Response::HTTP_OK);
-    }
+    // // Return the custom response
+    // return response()->json($responseData, Response::HTTP_OK);
+    // }
 
-    public function getFollowings(Request $request)
-    {
-        $user = $request->user(); 
+    // public function getFollowings(Request $request)
+    // {
+    //     $user = $request->user(); 
 
-        $followings = $user->followings()->with('recipes.images','recipes.ingredients','recipes.steps','recipes.category','images')->get();
+    //     $followings = $user->followings()->with('recipes.images','recipes.ingredients','recipes.steps','recipes.category','images')->get();
 
-        return response()->json($followings);
-    }
+    //     return response()->json($followings);
+    // }
 }

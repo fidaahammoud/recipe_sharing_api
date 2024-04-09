@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Recipe;
 use App\Models\Rating;
+use App\Models\Notification;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,7 @@ use App\Http\Resources\RecipeResource;
 
 class RateController extends Controller
 {
+    //
     public function updateStatusRate(Request $request, User $user, Recipe $recipe, $rate)
     {
         if (!Auth::check()) {
@@ -44,6 +46,16 @@ class RateController extends Controller
 
                 $recipe->avrgRating = $averageRating;
                 $recipe->save();
+
+                $notificationContent = 'User ' . $user->name . ' rated you recipe .' . $recipe->title . ' '.$rate;
+                $notification = new Notification([
+                    'source_user_id' => $user->id,
+                    'destination_user_id' => $recipe->creator_id,
+                    'content' => $notificationContent,
+                ]);
+                $notification->save();
+
+
                 return response()->json(['message' => 'Recipe rated successfully.','avgRating' => $averageRating]);
                 
             } else {
@@ -62,6 +74,14 @@ class RateController extends Controller
                 $recipe->avrgRating = $averageRating;
                 $recipe->save();
 
+                $notificationContent = 'User ' . $user->name . ' rated you recipe .' . $recipe->title . ' '.$rate;
+                $notification = new Notification([
+                    'source_user_id' => $user->id,
+                    'destination_user_id' => $recipe->creator_id,
+                    'content' => $notificationContent,
+                ]);
+                $notification->save();
+                
                 return response()->json(['message' => 'Recipe rated successfully.','avgRating' => $averageRating]);
             }
         } catch (\Exception $e) {

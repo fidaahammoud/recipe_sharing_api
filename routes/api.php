@@ -18,6 +18,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\DietaryController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\RateController;
+use App\Http\Controllers\FollowController;
 
 
 
@@ -52,7 +53,6 @@ Route::get('dietaries/{dietary}', [DietaryController::class, 'show']);
 
 
 Route::get('users', [UserController::class, 'index']);
-Route::get('users/{user}', [UserController::class, 'show']);
 
 Route::get('users/{user}/recipes', [RecipeController::class, 'userRecipes']);
 
@@ -82,8 +82,8 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::put('{user}/{recipe}/updateStatusFavorite', [FavoriteController::class, 'updateStatusFavorite']);
     Route::get('users/{user}/favorites', [FavoriteController::class, 'index']);
 
-    Route::post('users/{user}/toggleFollow', [UserController::class, 'toggleFollow']);
-    Route::get('users/{user}/followings',  [UserController::class, 'getFollowings']);
+   // Route::post('users/{user}/toggleFollow', [UserController::class, 'toggleFollow']);
+    //Route::get('users/{user}/followings',  [UserController::class, 'getFollowings']);
 
     Route::get('notifications',  [NotificationController::class, 'getNotifications']);
     Route::put('updateStatusNotification/{user}/{notification}',  [NotificationController::class, 'updateStatusNotification']);
@@ -98,5 +98,11 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::get('{user}/recipes/{recipe}', [RecipeController::class, 'show']);
+
+    Route::put('updateStatusFollow/{follower_id}/{followed_id}', [FollowController::class, 'updateStatusFollow']);
+    Route::get('followings/{user}',  [FollowController::class, 'getFollowings']);
+
+
+    Route::get('users/{user_a}/{user_b}', [UserController::class, 'show']);
 
 });
