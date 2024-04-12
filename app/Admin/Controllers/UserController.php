@@ -34,6 +34,11 @@ class UserController extends AdminController
         $grid->column('username', __('Username'));
         $grid->column('bio', __('Bio'));
         $grid->column('image_id', __('Image id'));
+       // $grid->column('isVerified', __('IsVerified'));
+       $grid->column('isVerified', __('IsVerified'))->display(function ($isVerified) {
+        return $isVerified ? 'Yes' : 'No';
+    });
+
       //  $grid->column('image.image', __('Image')); 
        // $grid->column('remember_token', __('Remember token'));
         $grid->column('created_at', __('Created at'));
@@ -60,7 +65,9 @@ class UserController extends AdminController
         $show->field('username', __('Username'));
         $show->field('bio', __('Bio'));
         $show->field('image_id', __('Image id'));
-        $show->field('remember_token', __('Remember token'));
+        $show->field('isVerified', __('IsVerified'));
+
+        // $show->field('remember_token', __('Remember token'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 
@@ -83,7 +90,11 @@ class UserController extends AdminController
         $form->text('username', __('Username'));
         $form->text('bio', __('Bio'));
         $form->number('image_id', __('Image id'));
-        $form->text('remember_token', __('Remember token'));
+
+        $form->select('isVerified', __('Is Verified'))->options([0 => 'No', 1 => 'Yes']);
+        //$form->select('isVerified', __('Is isVerified'))->options(['No' => 'No', 'Yes' => 'Yes']);
+
+        //$form->text('remember_token', __('Remember token'));
 
         return $form;
     }

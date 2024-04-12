@@ -24,6 +24,7 @@ return new class extends Migration
                 $table->text('comment')->nullable();
                 $table->unsignedInteger('totalLikes')->default(0);
                 $table->decimal('avrgRating', 3, 1)->default(0.00);
+                $table->boolean('isActive')->default(false);
                 $table->timestamps();
             });
         }

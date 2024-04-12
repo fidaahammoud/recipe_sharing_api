@@ -41,6 +41,10 @@ class RecipeController extends AdminController
         $grid->column('comment', __('Comment'));
         $grid->column('totalLikes', __('TotalLikes'));
         $grid->column('avrgRating', __('AvrgRating'));
+
+        $grid->column('isActive', __('IsActive'))->display(function ($isVerified) {
+            return $isVerified ? 'Yes' : 'No';
+        });
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
@@ -77,6 +81,8 @@ class RecipeController extends AdminController
         $show->field('comment', __('Comment'));
         $show->field('totalLikes', __('TotalLikes'));
         $show->field('avrgRating', __('AvrgRating'));
+        $show->field('isActive', __('isActive'));
+
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 
@@ -101,6 +107,7 @@ class RecipeController extends AdminController
         $form->textarea('comment', __('Comment'));
         $form->number('totalLikes', __('TotalLikes'));
         $form->decimal('avrgRating', __('AvrgRating'))->default(0.00);
+        $form->select('isActive', __('Is Active'))->options([0 => 'No', 1 => 'Yes']);
 
         return $form;
     }
