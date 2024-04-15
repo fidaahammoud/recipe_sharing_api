@@ -22,8 +22,8 @@ class UpdateRecipeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|required|string',
+            'title' => 'sometimes|required|string|max:255|min:3',
+            'description' => 'sometimes|required|string|min:3',
             'category' => 'sometimes|required|exists:categories,name',
             'preparationTime' => 'sometimes|required|integer|min:1',
             'ingredients' => 'sometimes|required|array|min:1',

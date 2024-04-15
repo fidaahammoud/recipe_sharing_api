@@ -22,8 +22,8 @@ class StoreRecipeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'title' => 'required|string|max:255|min:3',
+            'description' => 'required|string|min:3|max:1000',
             'category_id' => 'required',
             'dietary_id' => 'required',
             'comment' => 'nullable|string|max:1000',
