@@ -86,7 +86,9 @@ class RecipeController extends Controller
     
         // Eager load the relationships
         $recipe->load('category','dietary', 'ingredients', 'steps', 'user','comments.user.images','images');
-        return $recipe;
+       // return $recipe;
+
+        return response()->json(['message' => 'success', 'recipe' => $recipe]);
     }
     
 
@@ -124,59 +126,60 @@ class RecipeController extends Controller
 
 
     public function update(Request $request, Recipe $recipe)
-{
-    // Check if the authenticated user is the creator of the recipe
-    if (Auth::id() !== $recipe->creator_id) {
-        return response()->json(['message' => 'Unauthorized'], 403);
-    }
-
-    // Get the validated data from the request
-    $validator = Validator::make($request->all(), [
-        'title' => 'sometimes|string|max:255|min:3',
-        'description' => 'sometimes|string|min:3|max:1000',
-        'preparationTime' => 'sometimes|integer',
-        'category_id' => 'sometimes|integer',
-        'dietary_id' => 'sometimes|integer',
-        'ingredients' => 'sometimes|array',
-        'ingredients.*.ingredientName' => 'sometimes|string',
-        'ingredients.*.measurementUnit' => 'sometimes|string',
-        'preparationSteps' => 'sometimes|array',
-        'preparationSteps.*' => 'sometimes|string',
-        'image_id' => 'sometimes|integer',
-        'comment' => 'sometimes|nullable|string',
-    ]);
-
-    if ($validator->fails()) {
-        $errors = $validator->errors()->all();
-        return response()->json(['error' => 'Validation failed', 'message' => $errors], 400);
-    }
-
-    // Update Recipe with only the provided fields
-    $recipe->update($validator->validated());
-
-    // Update or create Ingredients
-    if ($request->has('ingredients')) {
-        $recipe->ingredients()->delete(); // Remove existing ingredients
-
-        foreach ($request->input('ingredients') as $ingredientData) {
-            $recipe->ingredients()->create($ingredientData);
+    {
+        // Check if the authenticated user is the creator of the recipe
+        if (Auth::id() !== $recipe->creator_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
-    }
-
-    // Update Steps
-    if ($request->has('preparationSteps')) {
-        $recipe->steps()->delete(); // Remove existing steps
-
-        foreach ($request->input('preparationSteps') as $stepData) {
-            $recipe->steps()->create(['stepDescription' => $stepData]);
+    
+        // Get the validated data from the request
+        $validator = Validator::make($request->all(), [
+            'title' => 'sometimes|string|max:255|min:3',
+            'description' => 'sometimes|string|min:3|max:1000',
+            'preparationTime' => 'sometimes|integer',
+            'category_id' => 'sometimes|integer',
+            'dietary_id' => 'sometimes|integer',
+            'ingredients' => 'sometimes|array',
+            'ingredients.*.ingredientName' => 'sometimes|string',
+            'ingredients.*.measurementUnit' => 'sometimes|string',
+            'preparationSteps' => 'sometimes|array',
+            'preparationSteps.*' => 'sometimes|string',
+            'image_id' => 'sometimes|integer',
+            'comment' => 'sometimes|nullable|string',
+        ]);
+    
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return response()->json(['error' => 'Validation failed', 'message' => $errors], 400);
         }
+    
+        // Update Recipe with only the provided fields and set isActive to false
+        $recipe->update(array_merge($validator->validated(), ['isActive' => false]));
+    
+        // Update or create Ingredients
+        if ($request->has('ingredients')) {
+            $recipe->ingredients()->delete(); // Remove existing ingredients
+    
+            foreach ($request->input('ingredients') as $ingredientData) {
+                $recipe->ingredients()->create($ingredientData);
+            }
+        }
+    
+        // Update Steps
+        if ($request->has('preparationSteps')) {
+            $recipe->steps()->delete(); // Remove existing steps
+    
+            foreach ($request->input('preparationSteps') as $stepData) {
+                $recipe->steps()->create(['stepDescription' => $stepData]);
+            }
+        }
+    
+        // Eager load the relationships
+        $recipe->load('category', 'dietary', 'ingredients', 'steps', 'user', 'comments.user.images');
+    
+        return response()->json(['message' => 'success', 'recipe' => $recipe]);
     }
-
-    // Eager load the relationships
-    $recipe->load('category', 'dietary', 'ingredients', 'steps', 'user', 'comments.user.images');
-
-    return response()->json(['message' => 'Recipe details updated successfully', 'recipe' => $recipe]);
-}
+    
 
 
 

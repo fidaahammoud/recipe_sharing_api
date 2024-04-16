@@ -110,7 +110,7 @@ public function updatePersonalInformation(Request $request, User $user)
     $user->refresh();
 
     return response()->json([
-        'message' => 'Personal information updated successfully',
+        'message' => 'success',
         'user' => $user
     ]);
 }

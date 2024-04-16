@@ -90,7 +90,7 @@ class AuthController extends Controller
         ]);
     
         return response()->json([
-            'message' => 'Profile completed successfully',
+            'message' => 'success',
             'user' => $user,
         ]);
     }

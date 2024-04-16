@@ -21,7 +21,7 @@ class Recipe extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title', 'category_id', 'dietary_id','description', 'preparationTime', 'comment','totalLikes','avrgRating','image_id'
+        'title', 'category_id', 'dietary_id','description', 'preparationTime', 'comment','totalLikes','avrgRating','image_id','isActive'
     ];
 
     public function category(): BelongsTo
