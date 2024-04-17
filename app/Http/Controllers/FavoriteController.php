@@ -67,7 +67,7 @@ public function index(Request $request, User $user)
     try {
         // Retrieve favorite recipes where isFavorite is true
         $favorites = $user->favorites()->where('isFavorite', true)
-                        ->with('ingredients','user.images', 'steps','comments.user.images','images')
+                        ->with('ingredients','user.images', 'steps','comments.user.images','images','category')
                         ->get();
 
         if ($favorites->isEmpty()) {

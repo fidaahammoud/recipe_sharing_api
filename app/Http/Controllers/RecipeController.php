@@ -270,38 +270,6 @@ class RecipeController extends Controller
     ];
 
 }
-
-    // public function rateRecipe(Recipe $recipe, $rating)
-    // {
-    //     // Ensure the user is authenticated
-    //     $user = auth()->user();
-    
-    //     // Check if the user has already rated the recipe
-    //     $existingRating = $recipe->ratings()->where('user_id', $user->id)->first();
-    
-    //     if ($existingRating) {
-    //         // If already rated, update the rating
-    //         $existingRating->update(['rating' => $rating]);
-    //     } else {
-    //         // If not, create a new rating
-    //         $ratingModel = new Rating(['user_id' => $user->id, 'rating' => $rating]);
-    //         $recipe->ratings()->save($ratingModel);
-    //     }
-    
-    //     // Calculate the new average rating
-    //     $totalRatings = $recipe->ratings()->count();
-    //     $sumRatings = $recipe->ratings()->sum('rating');
-    //     $newAverageRating = $totalRatings > 0 ? $sumRatings / $totalRatings : 0;
-    
-    //     // Update the average rating in the Recipe model
-    //     $recipe->avrgRating = $newAverageRating;
-    //     $recipe->save();
-    
-    //     // Return the response with average rating included
-    //     return response()->json(['message' => 'Recipe rated successfully.', 'avgRating' => $newAverageRating]);
-    // }
-
-
     
     public function search(Request $request)
     {
