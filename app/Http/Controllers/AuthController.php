@@ -51,6 +51,7 @@ class AuthController extends Controller
 
         $user = User::create($validated);
         return response()->json([
+            'message' => 'success',
             'data' => $user,
             'access_token' => $user->createToken('api_token')->plainTextToken,
             'token_type' => 'Bearer',
@@ -59,42 +60,45 @@ class AuthController extends Controller
  
 
     public function completeProfile(Request $request, User $user)
-    {
-        if (!Auth::check()) {
-            return response()->json(['error' => 'Unauthenticated'], 401);
-        }
-    
-        if (Auth::id() !== $user->id) {
-            return response()->json(['error' => 'Unauthorized access'], 403);
-        }
-    
-        $validator = Validator::make($request->all(), [
-            'username' => 'required|string|unique:users,username|max:255|min:3,' . $user->id,
-            'name' => 'required|string|max:255|min:3',
-            'bio' => 'nullable|string|max:255',
-            'image_id' => 'required|integer',
-
-        ]);
-    
-        if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return response()->json(['error' => 'Validation failed', 'message' => $errors], 400);
-        }
-    
-        $user->update([
-            'username' => $request->input('username'),
-            'name' => $request->input('name'),
-            'bio' => $request->input('bio'),
-            'image_id' => $request->input('image_id'),
-
-        ]);
-    
-        return response()->json([
-            'message' => 'success',
-            'user' => $user,
-        ]);
+{
+    if (!Auth::check()) {
+        return response()->json(['error' => 'Unauthenticated'], 401);
     }
-    
+
+    if (Auth::id() !== $user->id) {
+        return response()->json(['error' => 'Unauthorized access'], 403);
+    }
+
+    $validator = Validator::make($request->all(), [
+        'username' => 'required|string|unique:users,username|max:255|min:3,' . $user->id,
+        'name' => 'required|string|max:255|min:3',
+        'bio' => 'nullable|string|max:255',
+        'image_id' => 'required|integer',
+    ]);
+
+    if ($validator->fails()) {
+        $errors = $validator->errors()->toArray();
+        $errorMessage = $validator->errors()->first();
+
+        return response()->json([
+            'message' => $errorMessage,
+            'errors' => $errors,
+        ], 422);
+    }
+
+    $user->update([
+        'username' => $request->input('username'),
+        'name' => $request->input('name'),
+        'bio' => $request->input('bio'),
+        'image_id' => $request->input('image_id'),
+    ]);
+
+    return response()->json([
+        'message' => 'success',
+        'user' => $user,
+    ]);
+}
+
     
 
 

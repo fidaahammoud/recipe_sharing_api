@@ -149,8 +149,13 @@ class RecipeController extends Controller
         ]);
     
         if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-            return response()->json(['error' => 'Validation failed', 'message' => $errors], 400);
+            $errors = $validator->errors()->toArray();
+            $errorMessage = $validator->errors()->first();
+    
+            return response()->json([
+                'message' => $errorMessage,
+                'errors' => $errors,
+            ], 422);
         }
     
         // Update Recipe with only the provided fields and set isActive to false
@@ -250,7 +255,7 @@ class RecipeController extends Controller
 
         $recipe->delete();
 
-        return response()->json(['message' => 'Recipe deleted successfully']);
+        return response()->json(['message' => 'success']);
     }
 
 

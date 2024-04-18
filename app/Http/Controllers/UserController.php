@@ -83,10 +83,19 @@ public function updatePersonalInformation(Request $request, User $user)
         'image_id' => 'sometimes|integer',
     ]);
 
+  
+
     if ($validator->fails()) {
-        $errors = $validator->errors()->all();
-        return response()->json(['error' => 'Validation failed', 'message' => $errors], 400);
+        $errors = $validator->errors()->toArray();
+        $errorMessage = $validator->errors()->first();
+
+        return response()->json([
+            'message' => $errorMessage,
+            'errors' => $errors,
+        ], 422);
     }
+
+
 
     // Determine which attributes to update
     $attributesToUpdate = [];
