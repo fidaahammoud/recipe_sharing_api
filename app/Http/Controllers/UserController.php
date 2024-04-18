@@ -30,11 +30,14 @@ class UserController extends Controller
         ->with('images')
         ->paginate();
 
-        // Set the path for pagination links
-        $users->setPath('http://192.168.56.10:80/laravel/api/users');
+       
+        $value = env('URL_PAGINATE').'/users';
 
-        // Return the paginated results using your RecipeCollection
-        // return RecipeResource::collection($recipes);
+        $users->setPath($value);
+
+      //  $users->setPath('http://192.168.56.10:80/laravel/api/users');
+
+        
         return $users;
     }
 

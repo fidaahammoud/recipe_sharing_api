@@ -47,10 +47,10 @@
                         {{ $item['recipeId'] }}
                     </td>
                     <td>
-                        {{ $item['description'] }}
+                        {{ $item['title'] }}
                     </td>
                     <td>
-                        {{ $item['title'] }}
+                        {{ $item['description'] }}
                     </td>
                     <td>
                         {{ $item['category'] }}

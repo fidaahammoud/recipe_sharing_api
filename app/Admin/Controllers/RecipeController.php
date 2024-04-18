@@ -53,9 +53,12 @@ class RecipeController extends AdminController
             $filter->equal('category_id', 'Category')->select(Category::pluck('name', 'id'));
         });
 
-        // Filter by creator id
         $grid->filter(function($filter) {
             $filter->equal('creator_id', 'Creator ID')->select(User::pluck('name', 'id'));
+        });
+
+        $grid->filter(function($filter) {
+            $filter->equal('isActive', __('Is Active'))->select([0 => 'No', 1 => 'Yes']);
         });
 
         return $grid;
