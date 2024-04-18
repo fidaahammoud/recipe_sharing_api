@@ -34,7 +34,7 @@ class AuthController extends Controller
         
         return response()->json([
             'user_id' => $user->id,
-            'data' => $user,
+            'user' => $user,
             'access_token' => $user->createToken('api_token')->plainTextToken,
             'token_type' => 'Bearer',
         ]);
@@ -52,12 +52,12 @@ class AuthController extends Controller
         $user = User::create($validated);
         return response()->json([
             'message' => 'success',
-            'data' => $user,
+            'user' => $user,
             'access_token' => $user->createToken('api_token')->plainTextToken,
             'token_type' => 'Bearer',
         ],201);
     }
- 
+ //
 
     public function completeProfile(Request $request, User $user)
 {
