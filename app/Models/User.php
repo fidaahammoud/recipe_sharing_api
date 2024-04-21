@@ -34,7 +34,8 @@ class User extends Authenticatable
         'username',
         'profilePicture',
         'bio',
-        'image_id'
+        'image_id',
+        'isNotificationActive'
     ];
 
     /**

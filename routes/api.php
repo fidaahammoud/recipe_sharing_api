@@ -90,6 +90,7 @@ Route::middleware('auth:sanctum')->group(function (){
 
 
     Route::put('updatePersonalInformation/{user}', [UserController::class, 'updatePersonalInformation']);
+    Route::put('updateIsActiveNotification/{user}', [UserController::class, 'updateIsActiveNotification']);
 
     Route::post('image/{user}', [ImageController::class, 'uploadImageMobile']);
 

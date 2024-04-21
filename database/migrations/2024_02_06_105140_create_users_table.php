@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('image_id')->nullable()->constrained('images')->cascadeOnDelete();
             $table->unsignedInteger('totalFollowers')->default(0);
             $table->boolean('isVerified')->default(false);
+            $table->boolean('isNotificationActive')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });

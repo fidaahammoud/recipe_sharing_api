@@ -16,6 +16,7 @@ use Illuminate\Http\Response;
 use App\Models\Notification;
 use App\Models\Follow;
 
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -126,5 +127,35 @@ public function updatePersonalInformation(Request $request, User $user)
         'user' => $user
     ]);
 }
+
+public function updateIsActiveNotification(Request $request, User $user)
+    {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+        Log::Info($request);
+        Log::Info($user);
+        try {
+            
+            // if ($user->isNotificationActive !== $user->id) {
+            //     return response()->json(['message' => 'Unauthorized'], 403);
+            // }
+    
+            if ($user->isNotificationActive) { 
+                $user->update(['isNotificationActive' => false]);
+                return response()->json(['message' => 'Receive Notification is turned false.','isNotificationActive'=>$user->isNotificationActive]);
+            } else {
+                $user->update(['isNotificationActive' => true]);
+                return response()->json(['message' => 'Receive Notification is turned true.','isNotificationActive'=>$user->isNotificationActive]);
+            }
+            $user->save();
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error occurred while updating read isNotificationActive.'], 500);
+        }
+    }
+    
+
+
 
 }
