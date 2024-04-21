@@ -54,7 +54,7 @@ class RecipeController extends AdminController
         });
 
         $grid->filter(function($filter) {
-            $filter->equal('creator_id', 'Creator ID')->select(User::pluck('name', 'id'));
+            $filter->equal('creator_id', 'Chef')->select(User::pluck('name', 'id'));
         });
 
         $grid->filter(function($filter) {

@@ -136,11 +136,6 @@ public function updateIsActiveNotification(Request $request, User $user)
         Log::Info($request);
         Log::Info($user);
         try {
-            
-            // if ($user->isNotificationActive !== $user->id) {
-            //     return response()->json(['message' => 'Unauthorized'], 403);
-            // }
-    
             if ($user->isNotificationActive) { 
                 $user->update(['isNotificationActive' => false]);
                 return response()->json(['message' => 'Receive Notification is turned false.','isNotificationActive'=>$user->isNotificationActive]);

@@ -44,6 +44,16 @@ class UserController extends AdminController
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
+
+        // Adding filter for the 'name' column
+        $grid->filter(function($filter) {
+            $filter->equal('name', __('Name'))->select(User::pluck('name', 'name'));
+        });
+
+        $grid->filter(function($filter) {
+            $filter->equal('isVerified', __('Is Verified'))->select([0 => 'No', 1 => 'Yes']);
+        });
+
         return $grid;
     }
 
