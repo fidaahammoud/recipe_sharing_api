@@ -30,10 +30,10 @@ class UserController extends AdminController
         $grid->column('name', __('Name'));
         $grid->column('email', __('Email'));
        // $grid->column('email_verified_at', __('Email verified at'));
-        $grid->column('password', __('Password'));
+       // $grid->column('password', __('Password'));
         $grid->column('username', __('Username'));
         $grid->column('bio', __('Bio'));
-        $grid->column('image_id', __('Image id'));
+       // $grid->column('image_id', __('Image id'));
        // $grid->column('isVerified', __('IsVerified'));
        $grid->column('isVerified', __('IsVerified'))->display(function ($isVerified) {
         return $isVerified ? 'Yes' : 'No';
@@ -75,8 +75,10 @@ class UserController extends AdminController
         $show->field('username', __('Username'));
         $show->field('bio', __('Bio'));
         $show->field('image_id', __('Image id'));
-        $show->field('isVerified', __('IsVerified'));
-
+       // $show->field('isVerified', __('IsVerified'));
+       $show->field('isVerified', __('Is Verified'))->as(function ($isVerified) {
+        return $isVerified ? 'Yes' : 'No';
+    });
         // $show->field('remember_token', __('Remember token'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
@@ -96,7 +98,6 @@ class UserController extends AdminController
         $form->text('name', __('Name'));
         $form->email('email', __('Email'));
         $form->datetime('email_verified_at', __('Email verified at'))->default(date('Y-m-d H:i:s'));
-        $form->password('password', __('Password'));
         $form->text('username', __('Username'));
         $form->text('bio', __('Bio'));
         $form->number('image_id', __('Image id'));
