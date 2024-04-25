@@ -11,9 +11,19 @@ use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
-    public function getNotifications(Request $request)
+    public function getNotifications(Request $request,User $user)
     {
-        $user = Auth::user();
+       
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+    
+        if ($request->user()->id !== $user->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+
+        //$user = Auth::user();
 
         $notifications = Notification::where('destination_user_id', $user->id)
             ->orderBy('created_at', 'DESC')

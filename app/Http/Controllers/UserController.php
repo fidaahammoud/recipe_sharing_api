@@ -76,7 +76,7 @@ public function updatePersonalInformation(Request $request, User $user)
 
     // Check if the authenticated user matches the user whose profile is being updated
     if (Auth::id() !== $user->id) {
-        return response()->json(['error' => 'Unauthorized access'], 403);
+        return response()->json(['error' => 'Unauthorized'], 403);
     }
 
     // Validate the request data

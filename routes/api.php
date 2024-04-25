@@ -85,7 +85,7 @@ Route::middleware('auth:sanctum')->group(function (){
    // Route::post('users/{user}/toggleFollow', [UserController::class, 'toggleFollow']);
     //Route::get('users/{user}/followings',  [UserController::class, 'getFollowings']);
 
-    Route::get('notifications',  [NotificationController::class, 'getNotifications']);
+    Route::get('notifications/{user}',  [NotificationController::class, 'getNotifications']);
     Route::put('updateStatusNotification/{user}/{notification}',  [NotificationController::class, 'updateStatusNotification']);
 
 
