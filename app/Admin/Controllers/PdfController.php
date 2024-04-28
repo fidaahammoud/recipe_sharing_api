@@ -25,41 +25,31 @@ class PdfController extends Controller
             'guid' =>  $guid]);
 
        $guidRecord = DB::table('rapports')->where('guid', $guid)->first();
-       //$guidRecord = Rapport::find(1);
 
         
-        // Define the date range
         $startDate = Carbon::parse($guidRecord->startDate);
 
         $endDate = Carbon::parse($guidRecord->endDate);
 
         \Log::info('Start date', ['start_date' => $guidRecord->startDate]);
         \Log::info('End date', ['end_date' => $guidRecord->endDate]);
-        // Start the query without the creator_id and category_id condition
+
         $query = Recipe::whereBetween('created_at', [$startDate, $endDate]);
       
 
-        // Conditionally add the creator_id condition if needed
         if ($guidRecord->creator_id) {
             $query->where('creator_id', $guidRecord->creator_id);
         }
 
-        // Conditionally add the category_id condition if needed
         if ($guidRecord->category_id) {
             $query->where('category_id', $guidRecord->category_id);
         }
 
         $recipes = $query->get();
 
-        // $ids = $query->pluck('id');
-        // foreach ($ids as $id) {
-        //     Log::info('My ids', [ 'id' => $id]);
-        // }
-
         Log::info('My form', [
             'recipes' => $recipes]);
 
-        //arraya
          $data = collect();
         
          foreach ($recipes as $recipe) {
@@ -78,7 +68,6 @@ class PdfController extends Controller
 
        
     
-        //$pdf = Pdf::loadView('pdf', ['data' => $data, 'reportId' => $guidRecord->id]);
         $pdf = Pdf::loadView('pdf', ['data' => $data, 'reportId' => $guidRecord->id, 'createdAt' => $guidRecord->created_at]);
 
         return $pdf->stream('invoice.pdf');

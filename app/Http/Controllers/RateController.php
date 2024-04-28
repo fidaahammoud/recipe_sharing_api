@@ -14,7 +14,6 @@ use App\Http\Resources\RecipeResource;
 
 class RateController extends Controller
 {
-    //
     public function updateStatusRate(Request $request, User $user, Recipe $recipe, $rate)
     {
         if (!Auth::check()) {

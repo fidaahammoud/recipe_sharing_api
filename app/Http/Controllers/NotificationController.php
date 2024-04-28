@@ -22,9 +22,6 @@ class NotificationController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-
-        //$user = Auth::user();
-
         $notifications = Notification::where('destination_user_id', $user->id)
             ->orderBy('created_at', 'DESC')
             ->get();

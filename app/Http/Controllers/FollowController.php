@@ -87,8 +87,6 @@ class FollowController extends Controller
 public function getFollowings(Request $request)
 {
     $user = $request->user(); 
-
-    // Retrieve only the followed users where isFollowed is true
     $followings = $user->followings()
                         ->wherePivot('isFollowed', true)
                         ->with('recipes.images', 'recipes.ingredients', 'recipes.steps', 'recipes.category', 'images')

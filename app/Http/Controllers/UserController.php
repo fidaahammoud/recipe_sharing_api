@@ -9,7 +9,6 @@ use Spatie\QueryBuilder\QueryBuilder;
 use App\Models\User; 
 use App\Http\Resources\UserResource;
 use App\Http\Resources\UserCollection;
-use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Response;
@@ -22,23 +21,13 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-       // $users = User::all();
-
-       // return  $users;
-
-
        $users  = QueryBuilder::for(User::class)
         ->with('images')
         ->paginate();
 
-       
         $value = env('URL_PAGINATE').'/users';
+        $users->setPath($value);     
 
-        $users->setPath($value);
-
-      //  $users->setPath('http://192.168.56.10:80/laravel/api/users');
-
-        
         return $users;
     }
 
@@ -69,17 +58,14 @@ class UserController extends Controller
 
 public function updatePersonalInformation(Request $request, User $user)
 {
-    // Ensure the user is authenticated
     if (!Auth::check()) {
         return response()->json(['error' => 'Unauthenticated'], 401);
     }
 
-    // Check if the authenticated user matches the user whose profile is being updated
     if (Auth::id() !== $user->id) {
         return response()->json(['error' => 'Unauthorized'], 403);
     }
 
-    // Validate the request data
     $validator = Validator::make($request->all(), [
         'username' => 'sometimes|string|min:3|unique:users,username,' . $user->id,
         'name' => 'sometimes|string|max:255|min:3',
@@ -100,8 +86,6 @@ public function updatePersonalInformation(Request $request, User $user)
     }
 
 
-
-    // Determine which attributes to update
     $attributesToUpdate = [];
     if ($request->filled('username')) {
         $attributesToUpdate['username'] = $request->input('username');
@@ -116,10 +100,8 @@ public function updatePersonalInformation(Request $request, User $user)
         $attributesToUpdate['image_id'] = $request->input('image_id');
     }
 
-    // Update user's information
     $user->update($attributesToUpdate);
 
-    // Refresh the user to get updated values
     $user->refresh();
 
     return response()->json([

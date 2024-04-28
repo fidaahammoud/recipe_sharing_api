@@ -50,7 +50,6 @@ class RapportController extends AdminController
             $filter->equal('category_id', 'Category')->select(Category::pluck('name', 'id'));
         });
     
-        // Filter by creator id
         $grid->filter(function($filter) {
             $filter->equal('creator_id', 'User')->select(User::pluck('name', 'id'));
         });

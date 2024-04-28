@@ -60,11 +60,6 @@ class Recipe extends Model
         return $this->belongsTo(Image::class, 'image_id');
     }
 
-    // public function likes(): HasMany
-    // {
-    //     return $this->hasMany(Like::class);
-    // }
-
     public function likes(): BelongsToMany
     {
         return $this->belongsToMany(Like::class)->withTimestamps();
@@ -74,11 +69,6 @@ class Recipe extends Model
     {
         return $this->belongsToMany(Rating::class)->withTimestamps();
     }
-
-    // public function ratings(): HasMany
-    // {
-    //     return $this->hasMany(Rating::class);
-    // }
    
     public function favoritedBy(): BelongsToMany
     {

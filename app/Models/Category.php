@@ -17,9 +17,6 @@ class Category extends Model
         'categoryImage'
     ];
 
-
-
-    // Relationships
     public function recipes(): HasMany
     {
         return $this->hasMany(Recipe::class);

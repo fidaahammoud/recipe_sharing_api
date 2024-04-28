@@ -17,9 +17,6 @@ class Dietary extends Model
         'name',
     ];
 
-
-
-    // Relationships
     public function recipes(): HasMany
     {
         return $this->hasMany(Recipe::class);

@@ -9,7 +9,6 @@ use App\Models\Category;
 use App\Models\Ingredient;
 use App\Models\Step;
 use App\Http\Requests\StoreRecipeRequest;
-use App\Http\Requests\UpdateRecipeRequest;
 use App\Http\Resources\RecipeResource;
 use App\Http\Resources\RecipeCollection;
 use Illuminate\Support\Facades\Auth;
@@ -50,8 +49,6 @@ class RecipeController extends Controller
         
         $validatedData = $request->validated();
     
-    
-        // Create Recipe
         $recipe = Auth::user()->recipes()->create([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
@@ -63,9 +60,7 @@ class RecipeController extends Controller
             
         ]);
     
-        // Create or find Ingredients
         $ingredientsData = $validatedData['ingredients'];
-    
         foreach ($ingredientsData as $ingredientData) {
             $ingredient = new Ingredient([
                 'ingredientName' => $ingredientData['ingredientName'],
@@ -75,9 +70,7 @@ class RecipeController extends Controller
             $recipe->ingredients()->save($ingredient);
         }
     
-        // Create Steps
         $stepsData = $validatedData['preparationSteps'];
-    
         foreach ($stepsData as $stepData) {
             $step = new Step([
                 'stepDescription' => $stepData,
@@ -86,9 +79,7 @@ class RecipeController extends Controller
             $recipe->steps()->save($step);
         }
     
-        // Eager load the relationships
         $recipe->load('category','dietary', 'ingredients', 'steps', 'user','comments.user.images','images');
-       // return $recipe;
 
         return response()->json(['message' => 'success', 'recipe' => $recipe]);
     }
@@ -129,12 +120,10 @@ class RecipeController extends Controller
 
     public function update(Request $request, Recipe $recipe)
     {
-        // Check if the authenticated user is the creator of the recipe
         if (Auth::id() !== $recipe->creator_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
     
-        // Get the validated data from the request
         $validator = Validator::make($request->all(), [
             'title' => 'sometimes|string|max:255|min:3',
             'description' => 'sometimes|string|min:3|max:1000',
@@ -160,28 +149,24 @@ class RecipeController extends Controller
             ], 422);
         }
     
-        // Update Recipe with only the provided fields and set isActive to false
         $recipe->update(array_merge($validator->validated(), ['isActive' => false]));
     
-        // Update or create Ingredients
         if ($request->has('ingredients')) {
-            $recipe->ingredients()->delete(); // Remove existing ingredients
+            $recipe->ingredients()->delete();
     
             foreach ($request->input('ingredients') as $ingredientData) {
                 $recipe->ingredients()->create($ingredientData);
             }
         }
     
-        // Update Steps
         if ($request->has('preparationSteps')) {
-            $recipe->steps()->delete(); // Remove existing steps
+            $recipe->steps()->delete(); 
     
             foreach ($request->input('preparationSteps') as $stepData) {
                 $recipe->steps()->create(['stepDescription' => $stepData]);
             }
         }
     
-        // Eager load the relationships
         $recipe->load('category', 'dietary', 'ingredients', 'steps', 'user', 'comments.user.images');
     
         return response()->json(['message' => 'success', 'recipe' => $recipe]);
@@ -192,7 +177,6 @@ class RecipeController extends Controller
 
     public function destroy(Recipe $recipe)
     {
-        // Check if the authenticated user is the creator of the recipe
         if (Auth::id() !== $recipe->creator_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -249,7 +233,6 @@ class RecipeController extends Controller
                          ->get();
         $results->load('ingredients','user.images', 'steps','comments.user.images','images','category');
         
-
         return  [
             'data' => $results
         ];
