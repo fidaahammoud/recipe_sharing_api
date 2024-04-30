@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo' => '<b>Open</b> Admin',
+    'logo' => '<img src="' . asset('logo.jpeg') . '" alt="laravel daily" width="100" class="rounded-circle" />',
 
     /*
     |--------------------------------------------------------------------------
@@ -34,7 +34,7 @@ return [
     | '<img src="http://logo-url" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<b>OA</b>',
+    'logo-mini' => '<img src="' . asset('logo.jpeg') . '" alt="laravel daily" width="30" class="rounded-circle" />',
 
     /*
     |--------------------------------------------------------------------------
