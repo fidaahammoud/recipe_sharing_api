@@ -19,11 +19,10 @@ return [
     |--------------------------------------------------------------------------
     |
     | The logo of all admin pages. You can also set it as an image by using a
-    | `img` tag, eg '<img src="http://logo-url" alt="Admin logo">'.
+    | `img` tag, eg '<img src="http://192.168.56.10/laravel/storage/logo.jpeg" alt="Admin logo">'.
     |
     */
-    'logo' => '<img src="' . asset('logo.jpeg') . '" alt="laravel daily" width="100" class="rounded-circle" />',
-
+    'logo' => '<img src="http://192.168.56.10/laravel/storage/logo.jpeg" alt="Admin logo" class="rounded-circle" width="100" height="100">',
     /*
     |--------------------------------------------------------------------------
     | Open-admin mini logo
@@ -31,11 +30,10 @@ return [
     |
     | The logo of all admin pages when the sidebar menu is collapsed. You can
     | also set it as an image by using a `img` tag, eg
-    | '<img src="http://logo-url" alt="Admin logo">'.
+    | '<img src="{{ asset('logo.jpeg') }}" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<img src="' . asset('logo.jpeg') . '" alt="laravel daily" width="30" class="rounded-circle" />',
-
+    'logo-mini' => '<img src="http://192.168.56.10/laravel/storage/logo.jpeg" alt="Admin logo" class="rounded-circle" width="100" height="100">',
     /*
     |--------------------------------------------------------------------------
     | Open-admin bootstrap setting
