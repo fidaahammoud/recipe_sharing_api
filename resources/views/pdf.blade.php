@@ -11,7 +11,7 @@
     <table class="w-full">
         <tr>
             <td class="w-half">
-                <img src="{{ asset('logo.jpeg') }}" alt="laravel daily" width="200" />
+                <img src="{{ asset('storage/logo.jpeg') }}" alt="laravel daily" width="200" />
             </td>
             <td class="w-half">
             <h2>Report ID: {{ $reportId }}</h2>

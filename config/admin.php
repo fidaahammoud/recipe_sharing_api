@@ -22,7 +22,7 @@ return [
     | `img` tag, eg '<img src="http://192.168.56.10/laravel/storage/logo.jpeg" alt="Admin logo">'.
     |
     */
-    'logo' => '<img src="http://192.168.56.10/laravel/storage/logo.jpeg" alt="Admin logo" class="rounded-circle" width="100" height="100">',
+    'logo' => '<img src="http://' . env('SERVER_IP') . '/laravel/storage/logo.jpeg" alt="Admin logo" class="rounded-circle" width="100" height="100">',
     /*
     |--------------------------------------------------------------------------
     | Open-admin mini logo
@@ -33,7 +33,7 @@ return [
     | '<img src="{{ asset('logo.jpeg') }}" alt="Admin logo">'.
     |
     */
-    'logo-mini' => '<img src="http://192.168.56.10/laravel/storage/logo.jpeg" alt="Admin logo" class="rounded-circle" width="100" height="100">',
+    'logo-mini' => '<img src="http://' . env('SERVER_IP') . '/laravel/storage/logo.jpeg" alt="Admin logo" class="rounded-circle" width="100" height="100">',
     /*
     |--------------------------------------------------------------------------
     | Open-admin bootstrap setting
