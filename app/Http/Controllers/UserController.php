@@ -23,7 +23,7 @@ class UserController extends Controller
     {
        $users  = QueryBuilder::for(User::class)
         ->with('images')
-        ->paginate();
+        ->paginate(15);
 
         $value = env('URL_PAGINATE').'/users';
         $users->setPath($value);     

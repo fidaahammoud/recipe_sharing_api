@@ -31,7 +31,7 @@ class RecipeController extends Controller
         ->defaultSort('-created_at')
         ->allowedSorts(['preparationTime', 'created_at','totalLikes','avrgRating'])
         ->with('ingredients','user.images', 'steps','comments.user.images','images','category','dietary')
-        ->paginate();
+        ->paginate(15);
 
         $value = env('URL_PAGINATE').'/recipes';
 
