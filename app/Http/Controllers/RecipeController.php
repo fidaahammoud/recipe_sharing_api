@@ -131,10 +131,10 @@ class RecipeController extends Controller
             'category_id' => 'sometimes|integer',
             'dietary_id' => 'sometimes|integer',
             'ingredients' => 'sometimes|array',
-            'ingredients.*.ingredientName' => 'sometimes|string',
-            'ingredients.*.measurementUnit' => 'sometimes|string',
+            'ingredients.*.ingredientName' => 'sometimes|string|min:3',
+            'ingredients.*.measurementUnit' => 'sometimes|string|min:3',
             'preparationSteps' => 'sometimes|array',
-            'preparationSteps.*' => 'sometimes|string',
+            'preparationSteps.*' => 'sometimes|string|min:3',
             'image_id' => 'sometimes|integer',
             'comment' => 'sometimes|nullable|string',
         ]);

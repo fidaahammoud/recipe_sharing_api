@@ -29,10 +29,10 @@ class StoreRecipeRequest extends FormRequest
             'comment' => 'nullable|string|max:1000',
             'preparationTime' => 'required|integer|min:1',
             'ingredients' => 'required|array|min:1',
-            'ingredients.*.ingredientName' => 'required|string|max:255',
-            'ingredients.*.measurementUnit' => 'required|string|max:50',
+            'ingredients.*.ingredientName' => 'required|string|max:255|min:3',
+            'ingredients.*.measurementUnit' => 'required|string|max:50|min:3',
             'preparationSteps' => 'required|array|min:1',
-            'preparationSteps.*' => 'required|string',
+            'preparationSteps.*' => 'required|string|min:3',
             'image_id' => 'required',
         ];
     }

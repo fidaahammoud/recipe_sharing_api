@@ -29,23 +29,14 @@ class UserController extends AdminController
         $grid->column('id', __('Id'));
         $grid->column('name', __('Name'));
         $grid->column('email', __('Email'));
-       // $grid->column('email_verified_at', __('Email verified at'));
-       // $grid->column('password', __('Password'));
         $grid->column('username', __('Username'));
         $grid->column('bio', __('Bio'));
-       // $grid->column('image_id', __('Image id'));
-       // $grid->column('isVerified', __('IsVerified'));
        $grid->column('isVerified', __('IsVerified'))->display(function ($isVerified) {
         return $isVerified ? 'Yes' : 'No';
     });
-
-      //  $grid->column('image.image', __('Image')); 
-       // $grid->column('remember_token', __('Remember token'));
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
-
-        // Adding filter for the 'name' column
         $grid->filter(function($filter) {
             $filter->equal('name', __('Name'))->select(User::pluck('name', 'name'));
         });
@@ -75,11 +66,9 @@ class UserController extends AdminController
         $show->field('username', __('Username'));
         $show->field('bio', __('Bio'));
         $show->field('image_id', __('Image id'));
-       // $show->field('isVerified', __('IsVerified'));
        $show->field('isVerified', __('Is Verified'))->as(function ($isVerified) {
         return $isVerified ? 'Yes' : 'No';
     });
-        // $show->field('remember_token', __('Remember token'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
 
@@ -103,9 +92,6 @@ class UserController extends AdminController
         $form->number('image_id', __('Image id'));
 
         $form->select('isVerified', __('Is Verified'))->options([0 => 'No', 1 => 'Yes']);
-        //$form->select('isVerified', __('Is isVerified'))->options(['No' => 'No', 'Yes' => 'Yes']);
-
-        //$form->text('remember_token', __('Remember token'));
 
         return $form;
     }

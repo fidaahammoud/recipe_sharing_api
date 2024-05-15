@@ -33,14 +33,9 @@ class RecipeController extends AdminController
         $grid->column('user.name', __('CreatorName'));
         $grid->column('title', __('Title'));
         $grid->column('category.name', __('Category'));
-       // $grid->column('description', __('Description'));
-       // $grid->column('image_id', __('Image id'));
-        
         $grid->column('preparationTime', __('PreparationTime'));
-       // $grid->column('comment', __('Comment'));
         $grid->column('totalLikes', __('TotalLikes'));
         $grid->column('avrgRating', __('AvrgRating'));
-
         $grid->column('isActive', __('IsActive'))->display(function ($isVerified) {
             return $isVerified ? 'Yes' : 'No';
         });
